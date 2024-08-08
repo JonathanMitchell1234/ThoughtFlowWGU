@@ -1,20 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import JournalEntryModal from "@/components/JournalEntryModal"; // Adjust the import path as necessary
-import HomeScreen from "."; // Replace with your actual screen component
-import { Colors } from "@/constants/Colors"; // Adjust the import path as necessary
+import JournalEntryModal from "@/components/JournalEntryModal";
+import HomeScreen from ".";
+import { Colors } from "@/constants/Colors";
 
 const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
 	const [modalVisible, setModalVisible] = useState(false);
+	const [journalEntries, setJournalEntries] = useState([]);
 
-	// Method to toggle the modal visibility
-	const toggleModal = () => {
-		setModalVisible(!modalVisible);
-	};
+	const toggleModal = useCallback(() => {
+		setModalVisible((prev) => !prev);
+	}, []);
+
+	const handleSaveEntry = useCallback(
+		(newEntry) => {
+			setJournalEntries((prevEntries) => [newEntry, ...prevEntries]);
+			toggleModal();
+		},
+		[toggleModal]
+	);
 
 	return (
 		<>
@@ -26,7 +34,6 @@ export default function TabLayout() {
 			>
 				<Tabs.Screen
 					name="index"
-					component={HomeScreen}
 					options={{
 						title: "Add",
 						tabBarIcon: ({ color, focused }) => (
@@ -35,9 +42,11 @@ export default function TabLayout() {
 							</TouchableOpacity>
 						),
 					}}
-				/>
+				>
+					{(props) => <HomeScreen {...props} journalEntries={journalEntries} />}
+				</Tabs.Screen>
 			</Tabs.Navigator>
-			<JournalEntryModal visible={modalVisible} onDismiss={toggleModal} />
+			<JournalEntryModal visible={modalVisible} onDismiss={toggleModal} onSave={handleSaveEntry} />
 		</>
 	);
 }
