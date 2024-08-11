@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, TouchableOpacity, Platform, Alert, Animated, Easing } from "react-native";
-import { Modal } from "react-native-paper";
+import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Platform } from "react-native";
+import { Modal, IconButton } from "react-native-paper";
+import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
 
 const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [imageUri, setImageUri] = useState(null);
 	const slideAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -36,13 +38,35 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 		const newEntry = {
 			title,
 			content,
+			imageUri,
 			date: new Date().toISOString(),
 		};
 
 		onSave(newEntry);
 		setTitle("");
 		setContent("");
-	}, [title, content, onSave]);
+		setImageUri(null);
+	}, [title, content, imageUri, onSave]);
+
+	const openImagePicker = async () => {
+		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		if (permissionResult.granted === false) {
+			Alert.alert("Permission Denied", "You need to allow permission to access the media library.");
+			return;
+		}
+
+		const pickerResult = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!pickerResult.canceled) {
+			setImageUri(pickerResult.assets[0].uri);
+		}
+	};
 
 	const containerStyle = {
 		backgroundColor: "white",
@@ -75,12 +99,12 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 							multiline
 							style={[styles.input, styles.contentInput]}
 						/>
-						<TouchableOpacity onPress={handleSave} style={styles.button}>
-							<Text style={styles.buttonText}>Save</Text>
-						</TouchableOpacity>
-						<TouchableOpacity onPress={onDismiss} style={styles.button}>
-							<Text style={styles.buttonText}>Cancel</Text>
-						</TouchableOpacity>
+						{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+						<View style={styles.iconRow}>
+							<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
+							<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
+							<IconButton icon="cancel" size={30} color="#6200ee" onPress={onDismiss} />
+						</View>
 					</ScrollView>
 				</KeyboardAvoidingView>
 			</Animated.View>
@@ -110,16 +134,17 @@ const styles = StyleSheet.create({
 		height: 350,
 		textAlignVertical: "top",
 	},
-	button: {
-		backgroundColor: "#6200ee",
-		padding: 10,
-		borderRadius: 5,
-		alignItems: "center",
+	image: {
+		width: "100%",
+		height: 100,
 		marginTop: 10,
+		borderRadius: 10,
 	},
-	buttonText: {
-		color: "white",
-		fontSize: 16,
+	iconRow: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		marginTop: 10,
+		position: "fixed",
 	},
 });
 
