@@ -11,7 +11,7 @@ export default function HomeScreen({ journalEntries }) {
 	return (
 		<Provider>
 			<View style={{ flex: 1 }}>
-				<AvatarButton />
+				{/* <AvatarButton /> */}
 				<ParallaxScrollView
 					headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
 					headerImage={<Image source={require("@/assets/images/emotions.jpg")} style={styles.headerImage} />}

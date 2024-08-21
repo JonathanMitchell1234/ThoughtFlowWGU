@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Platform } from "react-native";
+import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Button, Platform } from "react-native";
 import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
@@ -8,6 +8,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [imageUri, setImageUri] = useState(null);
+	const [aiResponse, setAiResponse] = useState(""); // State for AI response
 	const slideAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -39,6 +40,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 			title,
 			content,
 			imageUri,
+			aiResponse, // Include AI response in the saved entry
 			date: new Date().toISOString(),
 		};
 
@@ -46,7 +48,8 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 		setTitle("");
 		setContent("");
 		setImageUri(null);
-	}, [title, content, imageUri, onSave]);
+		setAiResponse(""); // Clear AI response on save
+	}, [title, content, imageUri, aiResponse, onSave]);
 
 	const openImagePicker = async () => {
 		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -68,6 +71,11 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 		}
 	};
 
+	const generateAiResponse = async () => {
+		// Placeholder function to simulate generating AI response
+		setAiResponse("AI-generated response based on your content.");
+	};
+
 	const containerStyle = {
 		backgroundColor: "white",
 		padding: 20,
@@ -86,30 +94,40 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 
 	return (
 		<>
-		<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
-			<Animated.View style={containerStyle}>
-				<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-					<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-						<Text style={styles.modalTitle}>Journal Entry</Text>
-						<SelectMenu />
-						<TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
-						<TextInput
-							placeholder="Content"
-							value={content}
-							onChangeText={setContent}
-							multiline
-							style={[styles.input, styles.contentInput]}
-						/>
-						{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-						<View style={styles.iconRow}>
-							<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
-							<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
-							<IconButton icon="cancel" size={30} color="#6200ee" onPress={onDismiss} />
-						</View>
-					</ScrollView>
-				</KeyboardAvoidingView>
-			</Animated.View>
-		</Modal>
+			<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
+				<Animated.View style={containerStyle}>
+					<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+						<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+							<Text style={styles.modalTitle}>Journal Entry</Text>
+							<SelectMenu />
+							<TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
+							<TextInput
+								placeholder="Content"
+								value={content}
+								onChangeText={setContent}
+								multiline
+								style={[styles.input, styles.contentInput]}
+							/>
+							{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+
+							<View style={styles.aiResponseContainer}>
+								<View style={styles.aiResponseHeader}>
+									<Text style={styles.aiResponseLabel}>AI Suggestions/Responses</Text>
+									<IconButton icon="robot" size={30} color="#6200ee" onPress={generateAiResponse} style={styles.generateIcon} />
+								</View>
+								<Text style={styles.aiResponseText}>{aiResponse}</Text>
+								<Button title="Generate" onPress={generateAiResponse} color="#6200ee" />
+							</View>
+
+							<View style={styles.iconRow}>
+								<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
+								<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
+								<IconButton icon="cancel" size={30} color="#6200ee" onPress={onDismiss} />
+							</View>
+						</ScrollView>
+					</KeyboardAvoidingView>
+				</Animated.View>
+			</Modal>
 		</>
 	);
 };
@@ -141,6 +159,32 @@ const styles = StyleSheet.create({
 		height: 100,
 		marginTop: 10,
 		borderRadius: 10,
+	},
+	aiResponseContainer: {
+		marginVertical: 20,
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "#ccc",
+		borderRadius: 5,
+		backgroundColor: "#f9f9f9",
+	},
+	aiResponseHeader: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginBottom: 5,
+	},
+	aiResponseLabel: {
+		fontSize: 16,
+		fontWeight: "bold",
+	},
+	aiResponseText: {
+		fontSize: 14,
+		marginBottom: 10,
+	},
+	generateIcon: {
+		margin: 0,
+		padding: 0,
 	},
 	iconRow: {
 		flexDirection: "row",

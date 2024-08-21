@@ -33,6 +33,15 @@ export default function TabLayout() {
 				}}
 			>
 				<Tabs.Screen
+					name="settings"
+					options={{
+						title: "Settings",
+						tabBarIcon: ({ color, focused }) => <AntDesign name="setting" size={24} color={color} />,
+					}}
+				>
+					{(props) => <SettingsScreen {...props} />}
+				</Tabs.Screen>
+				<Tabs.Screen
 					name="index"
 					options={{
 						title: "Add",
@@ -44,6 +53,15 @@ export default function TabLayout() {
 					}}
 				>
 					{(props) => <HomeScreen {...props} journalEntries={journalEntries} />}
+				</Tabs.Screen>
+				<Tabs.Screen
+					name="stats"
+					options={{
+						title: "Stats",
+						tabBarIcon: ({ color, focused }) => <AntDesign name="linechart" size={24} color={color} />,
+					}}
+				>
+					{(props) => <StatsScreen {...props} />}
 				</Tabs.Screen>
 			</Tabs.Navigator>
 			<JournalEntryModal visible={modalVisible} onDismiss={toggleModal} onSave={handleSaveEntry} />
