@@ -85,6 +85,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 	};
 
 	return (
+		<>
 		<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
 			<Animated.View style={containerStyle}>
 				<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -109,6 +110,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 				</KeyboardAvoidingView>
 			</Animated.View>
 		</Modal>
+		</>
 	);
 };
 
