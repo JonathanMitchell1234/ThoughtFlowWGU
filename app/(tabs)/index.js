@@ -8,8 +8,7 @@ import { Provider } from "react-native-paper";
 import AvatarButton from "@/components/Avatar";
 import JournalEntryModal from "@/components/JournalEntryModal"; // Import the modal
 
-export default function HomeScreen({ journalEntries: initialEntries }) {
-	const [journalEntries, setJournalEntries] = useState(initialEntries);
+export default function HomeScreen({ journalEntries }) {
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 
@@ -24,8 +23,9 @@ export default function HomeScreen({ journalEntries: initialEntries }) {
 	};
 
 	const handleSaveEntry = (updatedEntry) => {
-		const updatedEntries = journalEntries.map((entry) => (entry.id === updatedEntry.id ? updatedEntry : entry));
-		setJournalEntries(updatedEntries);
+		// Update the journalEntries state with the updated entry
+		// This is a placeholder, you need to implement the actual update logic
+		console.log("Updated Entry:", updatedEntry);
 		handleModalDismiss();
 	};
 
