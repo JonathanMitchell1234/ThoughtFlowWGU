@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
@@ -6,8 +6,29 @@ import CardComponent from "@/components/Card";
 import SearchBar from "@/components/SearchBar";
 import { Provider } from "react-native-paper";
 import AvatarButton from "@/components/Avatar";
+import JournalEntryModal from "@/components/JournalEntryModal"; // Import the modal
 
-export default function HomeScreen({ journalEntries }) {
+export default function HomeScreen({ journalEntries: initialEntries }) {
+	const [journalEntries, setJournalEntries] = useState(initialEntries);
+	const [selectedEntry, setSelectedEntry] = useState(null);
+	const [modalVisible, setModalVisible] = useState(false);
+
+	const handleEntryPress = (entry) => {
+		setSelectedEntry(entry);
+		setModalVisible(true);
+	};
+
+	const handleModalDismiss = () => {
+		setSelectedEntry(null);
+		setModalVisible(false);
+	};
+
+	const handleSaveEntry = (updatedEntry) => {
+		const updatedEntries = journalEntries.map((entry) => (entry.id === updatedEntry.id ? updatedEntry : entry));
+		setJournalEntries(updatedEntries);
+		handleModalDismiss();
+	};
+
 	return (
 		<Provider>
 			<View style={{ flex: 1 }}>
@@ -19,10 +40,11 @@ export default function HomeScreen({ journalEntries }) {
 					<ThemedView style={styles.cardContainer}>
 						<SearchBar />
 						{journalEntries.map((entry, index) => (
-							<CardComponent key={index} entry={entry} />
+							<CardComponent key={index} entry={entry} onPress={() => handleEntryPress(entry)} />
 						))}
 					</ThemedView>
 				</ParallaxScrollView>
+				<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
 			</View>
 		</Provider>
 	);

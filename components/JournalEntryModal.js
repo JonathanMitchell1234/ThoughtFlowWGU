@@ -4,11 +4,11 @@ import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
 
-const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
-	const [title, setTitle] = useState("");
-	const [content, setContent] = useState("");
-	const [imageUri, setImageUri] = useState(null);
-	const [aiResponse, setAiResponse] = useState(""); // State for AI response
+const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
+	const [title, setTitle] = useState(entry?.title || "");
+	const [content, setContent] = useState(entry?.content || "");
+	const [imageUri, setImageUri] = useState(entry?.imageUri || null);
+	const [aiResponse, setAiResponse] = useState(entry?.aiResponse || ""); // State for AI response
 	const slideAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -29,6 +29,15 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 		}
 	}, [visible, slideAnim]);
 
+	useEffect(() => {
+		if (entry) {
+			setTitle(entry.title);
+			setContent(entry.content);
+			setImageUri(entry.imageUri);
+			setAiResponse(entry.aiResponse);
+		}
+	}, [entry]);
+
 	const handleSave = useCallback(() => {
 		if (typeof onSave !== "function") {
 			console.error("onSave is not a function");
@@ -36,20 +45,21 @@ const JournalEntryModal = ({ visible, onDismiss, onSave }) => {
 			return;
 		}
 
-		const newEntry = {
+		const updatedEntry = {
+			...entry,
 			title,
 			content,
 			imageUri,
 			aiResponse, // Include AI response in the saved entry
-			date: new Date().toISOString(),
+			date: entry?.date || new Date().toISOString(),
 		};
 
-		onSave(newEntry);
+		onSave(updatedEntry);
 		setTitle("");
 		setContent("");
 		setImageUri(null);
 		setAiResponse(""); // Clear AI response on save
-	}, [title, content, imageUri, aiResponse, onSave]);
+	}, [title, content, imageUri, aiResponse, onSave, entry]);
 
 	const openImagePicker = async () => {
 		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
