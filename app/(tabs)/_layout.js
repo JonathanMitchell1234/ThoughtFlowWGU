@@ -7,6 +7,7 @@ import HomeScreen from ".";
 import { Colors } from "@/constants/Colors";
 import SettingsMenu from "@/components/SettingsMenu";
 
+
 const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
@@ -42,11 +43,8 @@ export default function TabLayout() {
 					name="settings"
 					options={{
 						title: "Settings",
-						tabBarIcon: ({ color, focused }) => (
-							<TouchableOpacity onPress={toggleSettingsModal}>
-								<AntDesign name="setting" size={24} color={color} />
-							</TouchableOpacity>
-						),
+						tabBarIcon: ({ color, focused }) => <AntDesign name="setting" size={24} color={color} />,
+						tabBarButton: (props) => <TouchableOpacity {...props} onPress={toggleSettingsModal} />,
 					}}
 				>
 					{() => null}
