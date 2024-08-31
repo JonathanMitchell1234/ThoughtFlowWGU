@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 		position: "static",
 		top: 0,
 		right: 0,
-		margin: "6.5%", // Adjust as needed for padding from the edges
+		margin: "6.5%",
         zIndex: 999,
         marginBottom: -90,
 	},

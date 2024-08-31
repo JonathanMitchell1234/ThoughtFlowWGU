@@ -6,13 +6,14 @@ import JournalEntryModal from "@/components/JournalEntryModal";
 import HomeScreen from ".";
 import { Colors } from "@/constants/Colors";
 import SettingsMenu from "@/components/SettingsMenu";
-
+import StatisticsModal from "@/components/StatisticsModal";
 
 const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
 	const [journalModalVisible, setJournalModalVisible] = useState(false);
 	const [settingsModalVisible, setSettingsModalVisible] = useState(false);
+	const [statsModalVisible, setStatsModalVisible] = useState(false);
 	const [journalEntries, setJournalEntries] = useState([]);
 
 	const toggleJournalModal = useCallback(() => {
@@ -21,6 +22,10 @@ export default function TabLayout() {
 
 	const toggleSettingsModal = useCallback(() => {
 		setSettingsModalVisible((prev) => !prev);
+	}, []);
+
+	const toggleStatsModal = useCallback(() => {
+		setStatsModalVisible((prev) => !prev);
 	}, []);
 
 	const handleSaveEntry = useCallback(
@@ -67,13 +72,15 @@ export default function TabLayout() {
 					options={{
 						title: "Stats",
 						tabBarIcon: ({ color, focused }) => <AntDesign name="linechart" size={24} color={color} />,
+						tabBarButton: (props) => <TouchableOpacity {...props} onPress={toggleStatsModal} />,
 					}}
 				>
-					{(props) => <StatsScreen {...props} />}
+					{() => null}
 				</Tabs.Screen>
 			</Tabs.Navigator>
 			<JournalEntryModal visible={journalModalVisible} onDismiss={toggleJournalModal} onSave={handleSaveEntry} />
 			<SettingsMenu visible={settingsModalVisible} onDismiss={toggleSettingsModal} />
+			<StatisticsModal visible={statsModalVisible} onDismiss={toggleStatsModal} />
 		</>
 	);
 }
