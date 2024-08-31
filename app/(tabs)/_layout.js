@@ -5,23 +5,29 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import JournalEntryModal from "@/components/JournalEntryModal";
 import HomeScreen from ".";
 import { Colors } from "@/constants/Colors";
+import SettingsMenu from "@/components/SettingsMenu";
 
 const Tabs = createBottomTabNavigator();
 
 export default function TabLayout() {
-	const [modalVisible, setModalVisible] = useState(false);
+	const [journalModalVisible, setJournalModalVisible] = useState(false);
+	const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 	const [journalEntries, setJournalEntries] = useState([]);
 
-	const toggleModal = useCallback(() => {
-		setModalVisible((prev) => !prev);
+	const toggleJournalModal = useCallback(() => {
+		setJournalModalVisible((prev) => !prev);
+	}, []);
+
+	const toggleSettingsModal = useCallback(() => {
+		setSettingsModalVisible((prev) => !prev);
 	}, []);
 
 	const handleSaveEntry = useCallback(
 		(newEntry) => {
 			setJournalEntries((prevEntries) => [newEntry, ...prevEntries]);
-			toggleModal();
+			toggleJournalModal();
 		},
-		[toggleModal]
+		[toggleJournalModal]
 	);
 
 	return (
@@ -36,17 +42,21 @@ export default function TabLayout() {
 					name="settings"
 					options={{
 						title: "Settings",
-						tabBarIcon: ({ color, focused }) => <AntDesign name="setting" size={24} color={color} />,
+						tabBarIcon: ({ color, focused }) => (
+							<TouchableOpacity onPress={toggleSettingsModal}>
+								<AntDesign name="setting" size={24} color={color} />
+							</TouchableOpacity>
+						),
 					}}
 				>
-					{(props) => <SettingsScreen {...props} />}
+					{() => null}
 				</Tabs.Screen>
 				<Tabs.Screen
 					name="index"
 					options={{
 						title: "Add",
 						tabBarIcon: ({ color, focused }) => (
-							<TouchableOpacity onPress={toggleModal}>
+							<TouchableOpacity onPress={toggleJournalModal}>
 								<AntDesign name="pluscircleo" size={24} color="black" />
 							</TouchableOpacity>
 						),
@@ -64,7 +74,8 @@ export default function TabLayout() {
 					{(props) => <StatsScreen {...props} />}
 				</Tabs.Screen>
 			</Tabs.Navigator>
-			<JournalEntryModal visible={modalVisible} onDismiss={toggleModal} onSave={handleSaveEntry} />
+			<JournalEntryModal visible={journalModalVisible} onDismiss={toggleJournalModal} onSave={handleSaveEntry} />
+			<SettingsMenu visible={settingsModalVisible} onDismiss={toggleSettingsModal} />
 		</>
 	);
 }

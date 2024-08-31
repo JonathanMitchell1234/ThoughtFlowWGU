@@ -11,6 +11,7 @@ import JournalEntryModal from "@/components/JournalEntryModal"; // Import the mo
 export default function HomeScreen({ journalEntries }) {
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
+	const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
 	const handleEntryPress = (entry) => {
 		setSelectedEntry(entry);
@@ -29,6 +30,14 @@ export default function HomeScreen({ journalEntries }) {
 		handleModalDismiss();
 	};
 
+	const handleSearch = (query) => {
+		setSearchQuery(query);
+	};
+
+	const filteredEntries = journalEntries.filter(
+		(entry) => entry.title.toLowerCase().includes(searchQuery.toLowerCase()) || entry.content.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<Provider>
 			<View style={{ flex: 1 }}>
@@ -38,8 +47,8 @@ export default function HomeScreen({ journalEntries }) {
 					headerImage={<Image source={require("@/assets/images/emotions.jpg")} style={styles.headerImage} />}
 				>
 					<ThemedView style={styles.cardContainer}>
-						<SearchBar />
-						{journalEntries.map((entry, index) => (
+						<SearchBar onChangeText={handleSearch} value={searchQuery} />
+						{filteredEntries.map((entry, index) => (
 							<CardComponent key={index} entry={entry} onPress={() => handleEntryPress(entry)} />
 						))}
 					</ThemedView>
