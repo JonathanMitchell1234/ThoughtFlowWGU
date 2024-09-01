@@ -1,23 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import {
-	StyleSheet,
-	KeyboardAvoidingView,
-	ScrollView,
-	TextInput,
-	Text,
-	View,
-	Alert,
-	Animated,
-	Easing,
-	Image,
-	Button,
-	Platform,
-	TouchableOpacity,
-} from "react-native";
-import { Modal, IconButton } from "react-native-paper";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, KeyboardAvoidingView, ScrollView, Text, View, Alert, Animated, Easing, Platform, TouchableOpacity } from "react-native";
+import { Modal, Avatar } from "react-native-paper";
+import { AntDesign } from "@expo/vector-icons"; // Import AntDesign icons
+import * as ImagePicker from "expo-image-picker"; // Import expo-image-picker
 
-const SettingsMenu = ({ visible, onDismiss}) => {
+const SettingsMenu = ({ visible, onDismiss }) => {
 	const slideAnim = useRef(new Animated.Value(0)).current;
+	const [profileImage, setProfileImage] = useState("https://example.com/profile.jpg");
 
 	useEffect(() => {
 		if (visible) {
@@ -54,9 +43,23 @@ const SettingsMenu = ({ visible, onDismiss}) => {
 		],
 	};
 
-	const renderLinkWithDivider = (text, onPress) => (
-		<View key={text}>
-			<TouchableOpacity onPress={onPress}>
+	const handleImagePicker = async () => {
+		const result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+
+		if (!result.canceled) {
+			setProfileImage(result.assets[0].uri);
+		}
+	};
+
+	const renderLinkWithDivider = (text, onPress, iconName) => (
+		<View key={text} style={styles.linkContainer}>
+			<TouchableOpacity onPress={onPress} style={styles.link}>
+				<AntDesign name={iconName} size={24} color="black" style={styles.icon} />
 				<Text style={styles.linkText}>{text}</Text>
 			</TouchableOpacity>
 			<View style={styles.divider} />
@@ -69,9 +72,12 @@ const SettingsMenu = ({ visible, onDismiss}) => {
 				<Animated.View style={containerStyle}>
 					<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
 						<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-							{renderLinkWithDivider("Profile Photo", () => Alert.alert("Link 1 pressed"))}
-							{renderLinkWithDivider("Link 2", () => Alert.alert("Link 2 pressed"))}
-							{renderLinkWithDivider("Logout", () => Alert.alert("Link 3 pressed"))}
+							<View style={styles.avatarContainer}>
+								<Avatar.Image size={80} source={{ uri: profileImage }} />
+							</View>
+							{renderLinkWithDivider("Profile Photo", handleImagePicker, "user")}
+							{renderLinkWithDivider("FAQ", () => Alert.alert("FAQ pressed"), "link")}
+							{renderLinkWithDivider("Logout", () => Alert.alert("Logout pressed"), "logout")}
 						</ScrollView>
 					</KeyboardAvoidingView>
 				</Animated.View>
@@ -86,6 +92,22 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	avatarContainer: {
+		alignItems: "flex-start",
+		marginBottom: 20,
+	},
+	linkContainer: {
+		width: "100%",
+		alignItems: "center",
+	},
+	link: {
+		flexDirection: "row",
+		alignItems: "center",
+		width: "100%", // Changed from 80% to 100%
+	},
+	icon: {
+		marginRight: 10,
+	},
 	linkText: {
 		fontSize: 18,
 		color: "black",
@@ -95,7 +117,7 @@ const styles = StyleSheet.create({
 		height: 1,
 		backgroundColor: "#ccc",
 		marginVertical: 10,
-        width: "80%",
+		width: "90%", // Changed from 80% to 100%
 	},
 });
 

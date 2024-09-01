@@ -48,7 +48,7 @@ export default function TabLayout() {
 					name="settings"
 					options={{
 						title: "Settings",
-						tabBarIcon: ({ color, focused }) => <AntDesign name="setting" size={24} color={color} />,
+						tabBarIcon: ({ color}) => <AntDesign name="setting" size={24} color={color} />,
 						tabBarButton: (props) => <TouchableOpacity {...props} onPress={toggleSettingsModal} />,
 					}}
 				>
@@ -58,7 +58,7 @@ export default function TabLayout() {
 					name="index"
 					options={{
 						title: "Add",
-						tabBarIcon: ({ color, focused }) => (
+						tabBarIcon: ({ color }) => (
 							<TouchableOpacity onPress={toggleJournalModal}>
 								<AntDesign name="pluscircleo" size={24} color="black" />
 							</TouchableOpacity>
@@ -71,7 +71,7 @@ export default function TabLayout() {
 					name="stats"
 					options={{
 						title: "Stats",
-						tabBarIcon: ({ color, focused }) => <AntDesign name="linechart" size={24} color={color} />,
+						tabBarIcon: ({ color }) => <AntDesign name="linechart" size={24} color={color} />,
 						tabBarButton: (props) => <TouchableOpacity {...props} onPress={toggleStatsModal} />,
 					}}
 				>
