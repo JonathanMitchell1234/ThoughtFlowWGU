@@ -8,6 +8,7 @@ import { Provider } from "react-native-paper";
 import AvatarButton from "@/components/Avatar";
 import JournalEntryModal from "@/components/JournalEntryModal"; // Import the modal
 
+
 export default function HomeScreen({ journalEntries }) {
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);

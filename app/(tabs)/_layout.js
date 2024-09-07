@@ -48,7 +48,7 @@ export default function TabLayout() {
 					name="settings"
 					options={{
 						title: "Settings",
-						tabBarIcon: ({ color}) => <AntDesign name="setting" size={24} color={color} />,
+						tabBarIcon: ({ color }) => <AntDesign name="setting" size={24} color={color} />,
 						tabBarButton: (props) => <TouchableOpacity {...props} onPress={toggleSettingsModal} />,
 					}}
 				>
