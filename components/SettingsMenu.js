@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, KeyboardAvoidingView, ScrollView, Text, View, Alert, Animated, Easing, Platform, TouchableOpacity } from "react-native";
 import { Modal, Avatar } from "react-native-paper";
-import { AntDesign } from "@expo/vector-icons"; // Import AntDesign icons
-import * as ImagePicker from "expo-image-picker"; // Import expo-image-picker
+import { AntDesign } from "@expo/vector-icons"; 
+import * as ImagePicker from "expo-image-picker"; 
 
 const SettingsMenu = ({ visible, onDismiss }) => {
 	const slideAnim = useRef(new Animated.Value(0)).current;
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
 		height: 1,
 		backgroundColor: "#ccc",
 		marginVertical: 10,
-		width: "90%", // Changed from 80% to 100%
+		width: "90%", 
 	},
 });
 

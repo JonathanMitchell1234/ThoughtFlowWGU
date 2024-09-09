@@ -62,30 +62,35 @@ const items = [
 ];
 
 
-export default function SelectMenu () {
-	const [selectedItems, setSelectedItems] = useState([]);
-	console.log("Selected:", selectedItems);
-
-	return (
-		<View style={styles.container}>
-			<View>
-				<SectionedMultiSelect
-					items={items}
-					IconRenderer={Icon}
-					uniqueKey="id"
-					onSelectedItemsChange={setSelectedItems}
-					selectedItems={selectedItems}
-					selectText="Mood"
-				/>
-			</View>
-		</View>
-	);
+export default function SelectMenu({ selectedItems, onSelectedItemsChange }) {
+  return (
+    <View style={styles.container}>
+      <SectionedMultiSelect
+        items={items}
+        IconRenderer={Icon}
+        uniqueKey="id"
+        onSelectedItemsChange={onSelectedItemsChange}
+        selectedItems={selectedItems}
+        selectText="Mood"
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		// padding: 8,
-	},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
 });
+
+
+
+
+
+
+
+
+
+
+
