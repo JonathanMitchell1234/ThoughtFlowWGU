@@ -10,7 +10,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 	const [content, setContent] = useState(entry?.content || "");
 	const [imageUri, setImageUri] = useState(entry?.imageUri || null);
 	const [aiResponse, setAiResponse] = useState(entry?.aiResponse || "");
-	const [selectedMoods, setSelectedMoods] = useState(entry?.selectedMoods || []); // State for moods
+	const [selectedMoods, setSelectedMoods] = useState(entry?.selectedMoods || []);
 	const slideAnim = useRef(new Animated.Value(0)).current;
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 			setContent(entry.content);
 			setImageUri(entry.imageUri);
 			setAiResponse(entry.aiResponse);
-			setSelectedMoods(entry.selectedMoods || []); // Set saved moods
+			setSelectedMoods(entry.selectedMoods || []); 
 		}
 	}, [entry]);
 

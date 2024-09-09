@@ -6,13 +6,13 @@ import CardComponent from "@/components/Card";
 import SearchBar from "@/components/SearchBar";
 import { Provider } from "react-native-paper";
 import AvatarButton from "@/components/Avatar";
-import JournalEntryModal from "@/components/JournalEntryModal"; // Import the modal
+import JournalEntryModal from "@/components/JournalEntryModal";
 
-
-export default function HomeScreen({ journalEntries }) {
+export default function HomeScreen({ journalEntries: initialEntries }) {
+	const [journalEntries, setJournalEntries] = useState(initialEntries); 
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
-	const [searchQuery, setSearchQuery] = useState(""); // State for search query
+	const [searchQuery, setSearchQuery] = useState(""); 
 
 	const handleEntryPress = (entry) => {
 		setSelectedEntry(entry);
@@ -25,9 +25,15 @@ export default function HomeScreen({ journalEntries }) {
 	};
 
 	const handleSaveEntry = (updatedEntry) => {
-		// Update the journalEntries state with the updated entry
-		// This is a placeholder, you need to implement the actual update logic
-		console.log("Updated Entry:", updatedEntry);
+		setJournalEntries((prevEntries) => {
+			const entryIndex = prevEntries.findIndex((entry) => entry.id === updatedEntry.id);
+			if (entryIndex !== -1) {
+				const updatedEntries = [...prevEntries];
+				updatedEntries[entryIndex] = updatedEntry;
+				return updatedEntries;
+			}
+			return prevEntries;
+		});
 		handleModalDismiss();
 	};
 

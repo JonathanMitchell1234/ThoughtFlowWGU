@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 	link: {
 		flexDirection: "row",
 		alignItems: "center",
-		width: "100%", // Changed from 80% to 100%
+		width: "100%",
 	},
 	icon: {
 		marginRight: 10,
