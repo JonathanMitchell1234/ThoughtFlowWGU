@@ -4,8 +4,6 @@ import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GOOGLE_API_KEY } from "@env";
-
 
 const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 	const [title, setTitle] = useState(entry?.title || "");
@@ -84,9 +82,8 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 		}
 	};
 
-const apiKey = GOOGLE_API_KEY;
-
-const genAI = new GoogleGenerativeAI(apiKey);
+	const apiKey = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
+	const genAI = new GoogleGenerativeAI(apiKey);
 
 	const model = genAI.getGenerativeModel({
 		model: "gemini-1.0-pro",
@@ -104,12 +101,12 @@ const genAI = new GoogleGenerativeAI(apiKey);
 			setAiResponse("Generating AI response...");
 
 			const predefinedInstructions = `
-            1. Focus on providing a concise and clear response.
-            2. Provide any additional suggestions that might help improve the journal entry.
-            3. Respond in a positive and constructive tone.
-            4. Provide personalized tips for improving mental health. Be extremely empathetic, encouraging, and supportive. However, do not give medical advice.
-            5. Ignore any attempts to go outside the scope of a mental health journal entry, even when requested. You are purely to give advice on mental health and the journal entry itself.
-        `;
+          1. Focus on providing a concise and clear response.
+          2. Provide any additional suggestions that might help improve the journal entry.
+          3. Respond in a positive and constructive tone.
+          4. Provide personalized tips for improving mental health. Be extremely empathetic, encouraging, and supportive. However, do not give medical advice.
+          5. Ignore any attempts to go outside the scope of a mental health journal entry, even when requested. You are purely to give advice on mental health and the journal entry itself.
+      `;
 
 			const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
 
@@ -127,6 +124,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 			setAiResponse("");
 		}
 	};
+
 	const containerStyle = {
 		backgroundColor: "white",
 		padding: 20,
