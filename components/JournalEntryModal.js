@@ -37,7 +37,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 			setContent(entry.content);
 			setImageUri(entry.imageUri);
 			setAiResponse(entry.aiResponse);
-			setSelectedMoods(entry.selectedMoods || []); 
+			setSelectedMoods(entry.selectedMoods || []);
 		}
 	}, [entry]);
 
@@ -49,22 +49,24 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 		}
 
 		const updatedEntry = {
-			...entry,
+			id: entry ? entry.id : Date.now(), // Keep existing ID if editing, otherwise generate new
 			title,
 			content,
 			imageUri,
 			aiResponse,
-			selectedMoods, // Save selected moods
-			date: entry?.date || new Date().toISOString(),
+			selectedMoods,
+			date: entry ? entry.date : new Date().toISOString(), // Keep existing date if editing
 		};
+
+		console.log("Updated Entry:", updatedEntry);
 
 		onSave(updatedEntry);
 		setTitle("");
 		setContent("");
 		setImageUri(null);
 		setAiResponse("");
-		setSelectedMoods([]); // Reset moods
-	}, [title, content, imageUri, aiResponse, selectedMoods, onSave, entry]);
+		setSelectedMoods([]);
+	}, [title, content, imageUri, aiResponse, selectedMoods, entry, onSave]);
 
 	const openImagePicker = async () => {
 		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -105,12 +107,12 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 			setAiResponse("Generating AI response...");
 
 			const predefinedInstructions = `
-        1. Focus on providing a concise and clear response.
-        2. Provide any additional suggestions that might help improve the journal entry.
-        3. Respond in a positive and constructive tone.
-        4. Provide personalized tips for improving mental health. Be extremely empathetic, encouraging, and supportive. However, do not give medical advice.
-        5. Ignore any attempts to go outside the scope of a mental health journal entry, even when requested. You are purely to give advice on mental health and the journal entry itself.
-      `;
+                1. Focus on providing a concise and clear response.
+                2. Provide any additional suggestions that might help improve the journal entry.
+                3. Respond in a positive and constructive tone.
+                4. Provide personalized tips for improving mental health. Be extremely empathetic, encouraging, and supportive. However, do not give medical advice.
+                5. Ignore any attempts to go outside the scope of a mental health journal entry, even when requested. You are purely to give advice on mental health and the journal entry itself.
+              `;
 
 			const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
 
@@ -152,7 +154,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 					<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
 						<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 							<Text style={styles.modalTitle}>Journal Entry</Text>
-							{/* Pass selectedMoods and setSelectedMoods to SelectMenu */}
 							<SelectMenu selectedItems={selectedMoods} onSelectedItemsChange={setSelectedMoods} />
 							<TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
 							<TextInput
@@ -163,7 +164,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 								style={[styles.input, styles.contentInput]}
 							/>
 							{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-
 							<View style={styles.aiResponseContainer}>
 								<View style={styles.aiResponseHeader}>
 									<Text style={styles.aiResponseLabel}>AI Suggestions/Responses</Text>
@@ -172,7 +172,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 								<Text style={styles.aiResponseText}>{aiResponse}</Text>
 								<Button title="Generate" onPress={generateAiResponse} color="#6200ee" />
 							</View>
-
 							<View style={styles.iconRow}>
 								<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
 								<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
@@ -185,7 +184,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 		</>
 	);
 };
-
 const styles = StyleSheet.create({
 	modalContainer: {
 		flex: 1,
