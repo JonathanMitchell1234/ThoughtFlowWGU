@@ -236,7 +236,6 @@ const stopWords = [
 	"with",
 ].map((word) => word.toLowerCase());
 
-// Mood items from SelectMenu.js
 const moodItems = [
 	{ name: "Affectionate", id: 36 },
 	{ name: "Angry", id: 3 },
