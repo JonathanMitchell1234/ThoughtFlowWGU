@@ -1,9 +1,12 @@
 {
   "expo": {
         "extra": {
-      "googleClientId": "390648558615-cqs5aebnefhs6b54ccgu3hbqln15amj2.apps.googleusercontent.com"
+       "googleClientId": "390648558615-tjeo8e1om30u86ducfk424gieiphtepe.apps.googleusercontent.com",
+      "androidClientId": "390648558615-pb2vq1vh65ls57f5jlutlj2sjnducdfj.apps.googleusercontent.com",
+      "webClientId": "390648558615-79g68n4nhlfu8ffopnsnejiea7ba8un6.apps.googleusercontent.com"
     },
     "name": "test",
+    "owner": "dreadcatcleo",
     "slug": "test",
     "version": "1.0.0",
     "orientation": "portrait",

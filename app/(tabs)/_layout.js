@@ -80,7 +80,7 @@ export default function TabLayout() {
 			</Tabs.Navigator>
 			<JournalEntryModal visible={journalModalVisible} onDismiss={toggleJournalModal} onSave={handleSaveEntry} />
 			<SettingsMenu visible={settingsModalVisible} onDismiss={toggleSettingsModal} />
-			<StatisticsModal visible={statsModalVisible} onDismiss={toggleStatsModal} />
+			<StatisticsModal visible={statsModalVisible} onDismiss={toggleStatsModal} journalEntries={journalEntries} />
 		</>
 	);
 }
