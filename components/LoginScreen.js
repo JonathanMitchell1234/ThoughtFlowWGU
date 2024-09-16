@@ -6,7 +6,6 @@ import axios from "axios";
 import { Video } from "expo-av";
 
 const { width, height } = Dimensions.get("window");
-
 const LoginScreen = ({ onLogin }) => {
 	const auth = getAuth();
 	const [email, setEmail] = useState("");
