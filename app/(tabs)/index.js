@@ -5,22 +5,29 @@ import { ThemedView } from "@/components/ThemedView";
 import CardComponent from "@/components/Card";
 import SearchBar from "@/components/SearchBar";
 import { Provider } from "react-native-paper";
-import AvatarButton from "@/components/Avatar";
 import JournalEntryModal from "@/components/JournalEntryModal";
-import StatisticsModal from "@/components/StatisticsModal"; // Import the StatisticsModal component
+import StatisticsModal from "@/components/StatisticsModal";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { auth } from "@/firebaseConfig"; // Import your Firebase Auth instance
+import LoginScreen from "@/components/LoginScreen";
 
 export default function HomeScreen({ journalEntries: initialEntries }) {
 	const [journalEntries, setJournalEntries] = useState(initialEntries);
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
-	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false); // State for StatisticsModal visibility
+	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [forceRender, setForceRender] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	useEffect(() => {
 		setJournalEntries(initialEntries);
 		setForceRender((prev) => !prev); // Force re-render when entries change
+		const unsubscribe = auth.onAuthStateChanged((user) => {
+			setIsLoggedIn(!!user); // Set isLoggedIn based on user object existence
+		});
+
+		return unsubscribe;
 	}, [initialEntries]);
 
 	const handleEntryPress = (entry) => {
@@ -56,9 +63,6 @@ export default function HomeScreen({ journalEntries: initialEntries }) {
 		setSearchQuery(query);
 	};
 
-	console.log("All Entries:", journalEntries);
-	console.log("Search Query:", searchQuery);
-
 	const filteredEntries = journalEntries.filter(
 		(entry) =>
 			entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -66,37 +70,38 @@ export default function HomeScreen({ journalEntries: initialEntries }) {
 			searchQuery === ""
 	);
 
-	console.log("Filtered Entries:", filteredEntries);
-
 	return (
 		<Provider>
-			<View style={{ flex: 1 }}>
-				<ParallaxScrollView
-					headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-					headerImage={<Image source={require("@/assets/images/emotions.jpg")} style={styles.headerImage} />}
-				>
-					<ThemedView style={styles.cardContainer}>
-						<SearchBar onChangeText={handleSearch} value={searchQuery} />
-						{filteredEntries.map((entry, index) => {
-							console.log("Rendering Card for Entry:", entry);
-							return (
-								<CardComponent
-									key={index.toString()}
-									entry={entry}
-									onPress={() => handleEntryPress(entry)}
-									searchQuery={searchQuery}
-								/>
-							);
-						})}
-					</ThemedView>
-				</ParallaxScrollView>
-				<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
-				<StatisticsModal
-					visible={statisticsModalVisible}
-					onDismiss={() => setStatisticsModalVisible(false)}
-					journalEntries={journalEntries}
-				/>
-			</View>
+			{isLoggedIn ? (
+				<View style={{ flex: 1 }}>
+					<ParallaxScrollView
+						headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+						headerImage={<Image source={require("@/assets/images/emotions.jpg")} style={styles.headerImage} />}
+					>
+						<ThemedView style={styles.cardContainer}>
+							<SearchBar onChangeText={handleSearch} value={searchQuery} />
+							{filteredEntries.map((entry, index) => {
+								return (
+									<CardComponent
+										key={index.toString()}
+										entry={entry}
+										onPress={() => handleEntryPress(entry)}
+										searchQuery={searchQuery}
+									/>
+								);
+							})}
+						</ThemedView>
+					</ParallaxScrollView>
+					<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
+					<StatisticsModal
+						visible={statisticsModalVisible}
+						onDismiss={() => setStatisticsModalVisible(false)}
+						journalEntries={journalEntries}
+					/>
+				</View>
+			) : (
+				<LoginScreen onLogin={() => setIsLoggedIn(true)} />
+			)}
 		</Provider>
 	);
 }

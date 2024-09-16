@@ -15,6 +15,7 @@ export default function TabLayout() {
 	const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 	const [statsModalVisible, setStatsModalVisible] = useState(false);
 	const [journalEntries, setJournalEntries] = useState([]);
+	const [isLoggedIn, setIsLoggedIn] = useState(false); // Add isLoggedIn state
 
 	const toggleJournalModal = useCallback(() => {
 		setJournalModalVisible((prev) => !prev);
@@ -65,7 +66,7 @@ export default function TabLayout() {
 						),
 					}}
 				>
-					{(props) => <HomeScreen {...props} journalEntries={journalEntries} />}
+					{(props) => <HomeScreen {...props} journalEntries={journalEntries} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
 				</Tabs.Screen>
 				<Tabs.Screen
 					name="stats"
@@ -79,7 +80,7 @@ export default function TabLayout() {
 				</Tabs.Screen>
 			</Tabs.Navigator>
 			<JournalEntryModal visible={journalModalVisible} onDismiss={toggleJournalModal} onSave={handleSaveEntry} />
-			<SettingsMenu visible={settingsModalVisible} onDismiss={toggleSettingsModal} />
+			<SettingsMenu visible={settingsModalVisible} onDismiss={toggleSettingsModal} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
 			<StatisticsModal visible={statsModalVisible} onDismiss={toggleStatsModal} journalEntries={journalEntries} />
 		</>
 	);

@@ -49,13 +49,13 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 		}
 
 		const updatedEntry = {
-			id: entry ? entry.id : Date.now(), // Keep existing ID if editing, otherwise generate new
+			id: entry ? entry.id : Date.now(), 
 			title,
 			content,
 			imageUri,
 			aiResponse,
 			selectedMoods,
-			date: entry ? entry.date : new Date().toISOString(), // Keep existing date if editing
+			date: entry ? entry.date : new Date().toISOString(), 
 		};
 
 		console.log("Updated Entry:", updatedEntry);

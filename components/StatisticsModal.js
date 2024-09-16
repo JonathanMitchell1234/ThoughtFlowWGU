@@ -317,28 +317,28 @@ const StatisticsModal = ({ visible, onDismiss, journalEntries }) => {
 			}
 		});
 		const sortedMoods = Object.entries(moodCount).sort((a, b) => b[1] - a[1]);
-		return sortedMoods.slice(0, 3); // Get top 3 moods
+		return sortedMoods.slice(0, 5); // Get top 3 moods
 	};
 
 	// Function to count the most common words
-const calculateMostCommonWords = (entries) => {
-	const wordCount = {};
-	entries.forEach((entry) => {
-		if (entry.content) {
-			const words = entry.content
-				.toLowerCase()
-				.replace(/[^\w\s]/g, "")
-				.split(/\s+/);
-			words
-				.filter((word) => !stopWords.includes(word))
-				.forEach((word) => {
-					wordCount[word] = (wordCount[word] || 0) + 1;
-				});
-		}
-	});
-	const sortedWords = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
-	return sortedWords.slice(0, 3); 
-};
+	const calculateMostCommonWords = (entries) => {
+		const wordCount = {};
+		entries.forEach((entry) => {
+			if (entry.content) {
+				const words = entry.content
+					.toLowerCase()
+					.replace(/[^\w\s]/g, "")
+					.split(/\s+/);
+				words
+					.filter((word) => !stopWords.includes(word))
+					.forEach((word) => {
+						wordCount[word] = (wordCount[word] || 0) + 1;
+					});
+			}
+		});
+		const sortedWords = Object.entries(wordCount).sort((a, b) => b[1] - a[1]);
+		return sortedWords.slice(0, 5);
+	};
 
 	useEffect(() => {
 		if (journalEntries && journalEntries.length > 0) {
@@ -389,20 +389,34 @@ const calculateMostCommonWords = (entries) => {
 					<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
 						<Text style={styles.modalTitle}>Statistics</Text>
 						<View style={styles.statSection}>
-							<Text style={styles.sectionTitle}>Top 3 Moods</Text>
-							{commonMoods.map(([moodId, count], index) => (
-								<Text key={index} style={styles.statItem}>
-									{moodLookup[moodId]}: {count} times
-								</Text>
-							))}
+							<Text style={styles.sectionTitle}>Top 5 Moods</Text>
+							<View style={styles.table}>
+								<View style={styles.tableRow}>
+									<Text style={styles.tableHeader}>Mood</Text>
+									<Text style={styles.tableHeader}>Count</Text>
+								</View>
+								{commonMoods.map(([moodId, count], index) => (
+									<View key={index} style={styles.tableRow}>
+										<Text style={styles.tableCell}>{moodLookup[moodId]}</Text>
+										<Text style={styles.tableCell}>{count}</Text>
+									</View>
+								))}
+							</View>
 						</View>
 						<View style={styles.statSection}>
-							<Text style={styles.sectionTitle}>Top 3 Words</Text>
-							{commonWords.map(([word, count], index) => (
-								<Text key={index} style={styles.statItem}>
-									{word}: {count} times
-								</Text>
-							))}
+							<Text style={styles.sectionTitle}>Top 5 Words</Text>
+							<View style={styles.table}>
+								<View style={styles.tableRow}>
+									<Text style={styles.tableHeader}>Word</Text>
+									<Text style={styles.tableHeader}>Count</Text>
+								</View>
+								{commonWords.map(([word, count], index) => (
+									<View key={index} style={styles.tableRow}>
+										<Text style={styles.tableCell}>{word}</Text>
+										<Text style={styles.tableCell}>{count}</Text>
+									</View>
+								))}
+							</View>
 						</View>
 					</ScrollView>
 				</KeyboardAvoidingView>
@@ -418,8 +432,9 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	modalTitle: {
-		fontSize: 24,
+		fontSize: 45,
 		marginBottom: 7,
+		fontWeight: "bold",
 	},
 	iconRow: {
 		flexDirection: "row",
@@ -429,12 +444,28 @@ const styles = StyleSheet.create({
 		marginVertical: 20,
 	},
 	sectionTitle: {
-		fontSize: 18,
+		fontSize: 38,
 		fontWeight: "bold",
 		marginBottom: 10,
 	},
-	statItem: {
-		fontSize: 16,
+	table: {
+		borderWidth: 1,
+		borderColor: "#ddd",
+	},
+	tableRow: {
+		flexDirection: "row",
+	},
+	tableHeader: {
+		flex: 1,
+		fontWeight: "bold",
+		padding: 10,
+		backgroundColor: "#f0f0f0",
+	},
+	tableCell: {
+		flex: 1,
+		padding: 10,
+		borderWidth: 1,
+		borderColor: "#ddd",
 	},
 });
 

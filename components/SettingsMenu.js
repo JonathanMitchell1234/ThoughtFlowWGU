@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, KeyboardAvoidingView, ScrollView, Text, View, Alert, Animated, Easing, Platform, TouchableOpacity } from "react-native";
 import { Modal, Avatar } from "react-native-paper";
-import { AntDesign } from "@expo/vector-icons"; 
-import * as ImagePicker from "expo-image-picker"; 
+import { AntDesign } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/native";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
 
-const SettingsMenu = ({ visible, onDismiss }) => {
+const SettingsMenu = ({ visible, onDismiss, setIsLoggedIn }) => {
+	const navigation = useNavigation();
 	const slideAnim = useRef(new Animated.Value(0)).current;
 	const [profileImage, setProfileImage] = useState("https://example.com/profile.jpg");
 
@@ -66,6 +70,18 @@ const SettingsMenu = ({ visible, onDismiss }) => {
 		</View>
 	);
 
+	const handleLogout = async () => {
+		try {
+			await signOut(auth);
+			setIsLoggedIn(false);
+			Alert.alert("Logout Successful");
+			onDismiss();
+			navigation.navigate("LoginScreen");
+		} catch (error) {
+			Alert.alert("Logout Failed", error.message);
+		}
+	};
+
 	return (
 		<>
 			<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
@@ -77,7 +93,7 @@ const SettingsMenu = ({ visible, onDismiss }) => {
 							</View>
 							{renderLinkWithDivider("Profile Photo", handleImagePicker, "user")}
 							{renderLinkWithDivider("FAQ", () => Alert.alert("FAQ pressed"), "link")}
-							{renderLinkWithDivider("Logout", () => Alert.alert("Logout pressed"), "logout")}
+							{renderLinkWithDivider("Logout", handleLogout, "logout")}
 						</ScrollView>
 					</KeyboardAvoidingView>
 				</Animated.View>
@@ -117,7 +133,7 @@ const styles = StyleSheet.create({
 		height: 1,
 		backgroundColor: "#ccc",
 		marginVertical: 10,
-		width: "90%", 
+		width: "90%",
 	},
 });
 
