@@ -5,6 +5,8 @@ import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+
+
 const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 	const [title, setTitle] = useState(entry?.title || "");
 	const [content, setContent] = useState(entry?.content || "");
