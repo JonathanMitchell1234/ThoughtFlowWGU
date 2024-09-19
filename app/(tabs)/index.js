@@ -10,24 +10,31 @@ import StatisticsModal from "@/components/StatisticsModal";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { auth } from "@/firebaseConfig"; // Import your Firebase Auth instance
 import LoginScreen from "@/components/LoginScreen";
+import { getJournalEntries } from "@/journalApi"; // Import your API function
 
-export default function HomeScreen({ journalEntries: initialEntries }) {
+export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, onEntryPress }) {
 	const [journalEntries, setJournalEntries] = useState(initialEntries);
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [forceRender, setForceRender] = useState(false);
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+	useEffect(() => {
+		if (isLoggedIn) {
+			async function fetchEntries() {
+				try {
+					const entries = await getJournalEntries();
+					setJournalEntries(entries);
+				} catch (error) {
+					console.error("Error fetching entries:", error);
+				}
+			}
+			fetchEntries();
+		}
+	}, [isLoggedIn]);
 
 	useEffect(() => {
 		setJournalEntries(initialEntries);
-		setForceRender((prev) => !prev); // Force re-render when entries change
-		const unsubscribe = auth.onAuthStateChanged((user) => {
-			setIsLoggedIn(!!user); // Set isLoggedIn based on user object existence
-		});
-
-		return unsubscribe;
 	}, [initialEntries]);
 
 	const handleEntryPress = (entry) => {
@@ -63,13 +70,12 @@ export default function HomeScreen({ journalEntries: initialEntries }) {
 		setSearchQuery(query);
 	};
 
-	const filteredEntries = journalEntries.filter(
-		(entry) =>
-			entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			entry.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			searchQuery === ""
-	);
-
+const filteredEntries = journalEntries.filter(
+	(entry) =>
+		entry.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+		entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+		searchQuery === ""
+);
 	return (
 		<Provider>
 			{isLoggedIn ? (

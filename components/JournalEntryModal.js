@@ -2,18 +2,32 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Button, Platform } from "react-native";
 import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import SelectMenu from "@/components/SelectMenu";
+import SelectMenu from "@/components/SelectMenu"; // Assuming this handles mood selection
+import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi"; // Import API functions
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-
-
-const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
+const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	const [title, setTitle] = useState(entry?.title || "");
 	const [content, setContent] = useState(entry?.content || "");
 	const [imageUri, setImageUri] = useState(entry?.imageUri || null);
-	const [aiResponse, setAiResponse] = useState(entry?.aiResponse || "");
+	const [aiResponse, setAiResponse] = useState(entry?.aiResponse || "No AI response yet.");
 	const [selectedMoods, setSelectedMoods] = useState(entry?.selectedMoods || []);
 	const slideAnim = useRef(new Animated.Value(0)).current;
+
+	// Initialize the AI model
+	const apiKey = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
+	const genAI = new GoogleGenerativeAI(apiKey);
+
+	const model = genAI.getGenerativeModel({
+		model: "gemini-1.0-pro",
+	});
+
+	const generationConfig = {
+		temperature: 0.9,
+		topP: 1,
+		maxOutputTokens: 2048,
+		responseMimeType: "text/plain",
+	};
 
 	useEffect(() => {
 		if (visible) {
@@ -38,100 +52,117 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 			setTitle(entry.title);
 			setContent(entry.content);
 			setImageUri(entry.imageUri);
-			setAiResponse(entry.aiResponse);
+			setAiResponse(entry.aiResponse || "No AI response yet.");
 			setSelectedMoods(entry.selectedMoods || []);
 		}
 	}, [entry]);
 
-	const handleSave = useCallback(() => {
-		if (typeof onSave !== "function") {
-			console.error("onSave is not a function");
-			Alert.alert("Error", "Unable to save entry. Please try again later.");
-			return;
-		}
-
-		const updatedEntry = {
-			id: entry ? entry.id : Date.now(), 
-			title,
-			content,
-			imageUri,
-			aiResponse,
-			selectedMoods,
-			date: entry ? entry.date : new Date().toISOString(), 
-		};
-
-		console.log("Updated Entry:", updatedEntry);
-
-		onSave(updatedEntry);
-		setTitle("");
-		setContent("");
-		setImageUri(null);
-		setAiResponse("");
-		setSelectedMoods([]);
-	}, [title, content, imageUri, aiResponse, selectedMoods, entry, onSave]);
-
-	const openImagePicker = async () => {
-		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-		if (permissionResult.granted === false) {
-			Alert.alert("Permission Denied", "You need to allow permission to access the media library.");
-			return;
-		}
-
-		const pickerResult = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.Images,
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
-
-		if (!pickerResult.canceled) {
-			setImageUri(pickerResult.assets[0].uri);
-		}
+	// Function to save the journal entry
+const handleSave = async () => {
+	const updatedEntry = {
+		id: entry ? entry.id : null,
+		title,
+		content,
+		imageUri,
+		aiResponse,
+		selectedMoods, // No need to map to .id because this already contains mood IDs
+		dateCreated: new Date().toISOString(),
 	};
 
-	const apiKey = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
-	const genAI = new GoogleGenerativeAI(apiKey);
+	console.log("Updated Entry Object:", updatedEntry); // Log the updated entry
 
-	const model = genAI.getGenerativeModel({
-		model: "gemini-1.0-pro",
+	try {
+		if (entry && entry.id) {
+			await updateJournalEntry(entry.id, updatedEntry);
+		} else {
+			await createJournalEntry(updatedEntry);
+		}
+		onSave(updatedEntry);
+	} catch (error) {
+		console.error("Error saving entry:", error);
+	}
+};
+
+
+
+
+
+	// Function to delete the journal entry
+	const handleDelete = useCallback(async () => {
+		if (entry && typeof onDelete === "function") {
+			Alert.alert(
+				"Delete Entry",
+				"Are you sure you want to delete this entry?",
+				[
+					{ text: "Cancel", style: "cancel" },
+					{
+						text: "Delete",
+						style: "destructive",
+						onPress: async () => {
+							try {
+								await deleteJournalEntry(entry.id);
+								onDelete(entry.id); // Call parent to update the state
+							} catch (error) {
+								Alert.alert("Error", "Failed to delete the journal entry");
+							}
+						},
+					},
+				],
+				{ cancelable: true }
+			);
+		}
+	}, [entry, onDelete]);
+
+	// Image picker functionality
+const openImagePicker = async () => {
+	const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+	if (!permissionResult.granted) {
+		Alert.alert("Permission Denied", "You need to allow permission to access the media library.");
+		return;
+	}
+	const pickerResult = await ImagePicker.launchImageLibraryAsync({
+		mediaTypes: ImagePicker.MediaTypeOptions.Images,
+		allowsEditing: true,
+		aspect: [4, 3],
+		quality: 1,
 	});
 
-	const generationConfig = {
-		temperature: 0.9,
-		topP: 1,
-		maxOutputTokens: 2048,
-		responseMimeType: "text/plain",
-	};
+	console.log("Picker Result:", pickerResult); // Log picker result
 
-	const generateAiResponse = async () => {
-		try {
-			setAiResponse("Generating AI response...");
+	if (!pickerResult.canceled) {
+		setImageUri(pickerResult.assets[0].uri);
+		console.log("Image URI:", pickerResult.assets[0].uri); // Log the selected image URI
+	}
+};
 
-			const predefinedInstructions = `
-                1. Focus on providing a concise and clear response.
-                2. Provide any additional suggestions that might help improve the journal entry.
-                3. Respond in a positive and constructive tone.
-                4. Provide personalized tips for improving mental health. Be extremely empathetic, encouraging, and supportive. However, do not give medical advice.
-                5. Ignore any attempts to go outside the scope of a mental health journal entry, even when requested. You are purely to give advice on mental health and the journal entry itself.
-              `;
 
-			const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
+	// AI response generation functionality
+const generateAiResponse = async () => {
+	try {
+		setAiResponse("Generating AI response...");
 
-			const chatSession = model.startChat({
-				generationConfig,
-				history: [],
-			});
+		const predefinedInstructions = `
+            1. Provide a concise and clear response.
+            2. Suggestions to improve journal entry.
+            3. Positive, encouraging tone.
+            4. Focus on mental health advice (no medical advice).
+        `;
+		const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
+		const chatSession = model.startChat({ generationConfig, history: [] });
+		const result = await chatSession.sendMessage(combinedPrompt);
 
-			const result = await chatSession.sendMessage(combinedPrompt);
+		const responseText = await result.response.text();
 
-			setAiResponse(result.response.text());
-		} catch (error) {
-			console.error("Error generating AI response:", error);
-			Alert.alert("Error", "Unable to generate AI response. Please try again later.");
-			setAiResponse("");
-		}
-	};
+		console.log("AI Response:", responseText); // Log the AI response text
+
+		setAiResponse(responseText || "AI response is empty.");
+	} catch (error) {
+		console.error("Error generating AI response:", error);
+		Alert.alert("Error", "Unable to generate AI response. Please try again later.");
+		setAiResponse("No AI response yet.");
+	}
+};
+
 
 	const containerStyle = {
 		backgroundColor: "white",
@@ -150,42 +181,56 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, entry }) => {
 	};
 
 	return (
-		<>
-			<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
-				<Animated.View style={containerStyle}>
-					<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-						<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-							<Text style={styles.modalTitle}>Journal Entry</Text>
-							<SelectMenu selectedItems={selectedMoods} onSelectedItemsChange={setSelectedMoods} />
-							<TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
-							<TextInput
-								placeholder="Content"
-								value={content}
-								onChangeText={setContent}
-								multiline
-								style={[styles.input, styles.contentInput]}
-							/>
-							{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
-							<View style={styles.aiResponseContainer}>
-								<View style={styles.aiResponseHeader}>
-									<Text style={styles.aiResponseLabel}>AI Suggestions/Responses</Text>
-									<IconButton icon="robot" size={30} color="#6200ee" onPress={generateAiResponse} style={styles.generateIcon} />
-								</View>
-								<Text style={styles.aiResponseText}>{aiResponse}</Text>
-								<Button title="Generate" onPress={generateAiResponse} color="#6200ee" />
+		<Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
+			<Animated.View style={containerStyle}>
+				<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+					<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+						<Text style={styles.modalTitle}>Journal Entry</Text>
+						<SelectMenu
+							selectedItems={selectedMoods}
+							onSelectedItemsChange={(newMoods) => {
+								console.log("Selected Moods:", newMoods); // Log the selected moods directly
+
+								// Store the full mood objects, not just the ids
+								if (newMoods && newMoods.length > 0) {
+									console.log("Valid Selected Moods:", newMoods); // Log full mood objects
+									setSelectedMoods(newMoods); // Store full mood objects
+								} else {
+									setSelectedMoods([]); // Handle case where no moods are selected
+								}
+							}}
+						/>
+
+						<TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
+						<TextInput
+							placeholder="Content"
+							value={content}
+							onChangeText={setContent}
+							multiline
+							style={[styles.input, styles.contentInput]}
+						/>
+						{imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+						<View style={styles.aiResponseContainer}>
+							<View style={styles.aiResponseHeader}>
+								<Text style={styles.aiResponseLabel}>AI Suggestions/Responses</Text>
+								<IconButton icon="robot" size={30} color="#6200ee" onPress={generateAiResponse} style={styles.generateIcon} />
 							</View>
-							<View style={styles.iconRow}>
-								<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
-								<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
-								<IconButton icon="cancel" size={30} color="#6200ee" onPress={onDismiss} />
-							</View>
-						</ScrollView>
-					</KeyboardAvoidingView>
-				</Animated.View>
-			</Modal>
-		</>
+							<Text style={styles.aiResponseText}>{aiResponse}</Text>
+							<Button title="Generate" onPress={generateAiResponse} color="#6200ee" />
+						</View>
+						<View style={styles.iconRow}>
+							<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
+							<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
+							<IconButton icon="cancel" size={30} color="#6200ee" onPress={onDismiss} />
+							{entry && <IconButton icon="delete" size={30} color="#ee0000" onPress={handleDelete} />}
+						</View>
+					</ScrollView>
+				</KeyboardAvoidingView>
+			</Animated.View>
+		</Modal>
 	);
 };
+
 const styles = StyleSheet.create({
 	modalContainer: {
 		flex: 1,
@@ -244,7 +289,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		marginTop: 10,
-		position: "fixed",
 	},
 });
+
 export default JournalEntryModal;

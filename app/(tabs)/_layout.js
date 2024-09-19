@@ -15,7 +15,7 @@ export default function TabLayout() {
 	const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 	const [statsModalVisible, setStatsModalVisible] = useState(false);
 	const [journalEntries, setJournalEntries] = useState([]);
-	const [isLoggedIn, setIsLoggedIn] = useState(false); // Add isLoggedIn state
+	const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
 	const toggleJournalModal = useCallback(() => {
 		setJournalModalVisible((prev) => !prev);

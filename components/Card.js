@@ -8,12 +8,18 @@ const CardComponent = ({ entry, onPress, searchQuery }) => {
 	console.log("Rendering Card Component for Entry:", entry);
 	console.log("Entry Title:", entry.title);
 	console.log("Entry Content:", entry.content);
-	console.log("Search Query:", searchQuery);
+	console.log("Image URI:", entry.imageUri); // Log image URI
+	console.log("AI Response:", entry.aiResponse); // Log AI response
+	console.log("Selected Moods:", entry.selectedMoods); // Log selected moods
+
+	const date = new Date(entry.dateCreated);
+	const formattedDate = date.toLocaleDateString();
+
 
 	return (
 		<TouchableOpacity onPress={onPress}>
 			<Card style={styles.card}>
-				<Card.Title title={entry.title} subtitle={new Date(entry.date).toLocaleDateString()} left={LeftContent} />
+				<Card.Title title={entry.title} subtitle={<Text>{formattedDate}</Text>} left={LeftContent} />
 				<Card.Content>
 					{entry.imageUri && <Image source={{ uri: entry.imageUri }} style={styles.image} resizeMode="cover" />}
 					<Text numberOfLines={3} ellipsizeMode="tail">
