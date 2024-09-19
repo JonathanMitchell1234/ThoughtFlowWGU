@@ -7,9 +7,9 @@ import SearchBar from "@/components/SearchBar";
 import { Provider } from "react-native-paper";
 import JournalEntryModal from "@/components/JournalEntryModal";
 import StatisticsModal from "@/components/StatisticsModal";
-import { auth } from "@/firebaseConfig"; 
+import { auth } from "@/firebaseConfig"; // Import your Firebase Auth instance
 import LoginScreen from "@/components/LoginScreen";
-import { getJournalEntries } from "@/journalApi"; 
+import { getJournalEntries } from "@/journalApi"; // Import your API function
 
 export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, onEntryPress }) {
 	const [journalEntries, setJournalEntries] = useState(initialEntries);
@@ -53,6 +53,7 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 		setModalVisible(false);
 	};
 
+	// Modified to display new entry immediately
 	const handleSaveEntry = (updatedEntry) => {
 		console.log("Saving Entry:", updatedEntry);
 		setJournalEntries((prevEntries) => {
@@ -63,7 +64,7 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 				updatedEntries = [...prevEntries];
 				updatedEntries[existingIndex] = updatedEntry;
 			} else {
-				// Add new entry
+				// Add new entry to the top of the list
 				updatedEntries = [updatedEntry, ...prevEntries];
 			}
 			// Remove duplicates by ID and sort by date
@@ -104,7 +105,12 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 							))}
 						</ThemedView>
 					</ParallaxScrollView>
-					<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
+					<JournalEntryModal
+						visible={modalVisible}
+						onDismiss={handleModalDismiss}
+						onSave={handleSaveEntry}
+						entry={selectedEntry}
+					/>
 					<StatisticsModal
 						visible={statisticsModalVisible}
 						onDismiss={() => setStatisticsModalVisible(false)}

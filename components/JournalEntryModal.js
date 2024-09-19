@@ -2,8 +2,8 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Button, Platform } from "react-native";
 import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import SelectMenu from "@/components/SelectMenu"; // Assuming this handles mood selection
-import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi"; // Import API functions
+import SelectMenu from "@/components/SelectMenu"; 
+import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi"; 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
@@ -58,34 +58,30 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	}, [entry]);
 
 	// Function to save the journal entry
-const handleSave = async () => {
-	const updatedEntry = {
-		id: entry ? entry.id : null,
-		title,
-		content,
-		imageUri,
-		aiResponse,
-		selectedMoods, // No need to map to .id because this already contains mood IDs
-		dateCreated: new Date().toISOString(),
-	};
+	const handleSave = async () => {
+		const updatedEntry = {
+			id: entry ? entry.id : null,
+			title,
+			content,
+			imageUri,
+			aiResponse,
+			selectedMoods, // No need to map to .id because this already contains mood IDs
+			dateCreated: new Date().toISOString(),
+		};
 
-	console.log("Updated Entry Object:", updatedEntry); // Log the updated entry
+		console.log("Updated Entry Object:", updatedEntry); // Log the updated entry
 
-	try {
-		if (entry && entry.id) {
-			await updateJournalEntry(entry.id, updatedEntry);
-		} else {
-			await createJournalEntry(updatedEntry);
+		try {
+			if (entry && entry.id) {
+				await updateJournalEntry(entry.id, updatedEntry);
+			} else {
+				await createJournalEntry(updatedEntry);
+			}
+			onSave(updatedEntry);
+		} catch (error) {
+			console.error("Error saving entry:", error);
 		}
-		onSave(updatedEntry);
-	} catch (error) {
-		console.error("Error saving entry:", error);
-	}
-};
-
-
-
-
+	};
 
 	// Function to delete the journal entry
 	const handleDelete = useCallback(async () => {
@@ -114,55 +110,53 @@ const handleSave = async () => {
 	}, [entry, onDelete]);
 
 	// Image picker functionality
-const openImagePicker = async () => {
-	const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-	if (!permissionResult.granted) {
-		Alert.alert("Permission Denied", "You need to allow permission to access the media library.");
-		return;
-	}
-	const pickerResult = await ImagePicker.launchImageLibraryAsync({
-		mediaTypes: ImagePicker.MediaTypeOptions.Images,
-		allowsEditing: true,
-		aspect: [4, 3],
-		quality: 1,
-	});
+	const openImagePicker = async () => {
+		const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+		if (!permissionResult.granted) {
+			Alert.alert("Permission Denied", "You need to allow permission to access the media library.");
+			return;
+		}
+		const pickerResult = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
 
-	console.log("Picker Result:", pickerResult); // Log picker result
+		console.log("Picker Result:", pickerResult); // Log picker result
 
-	if (!pickerResult.canceled) {
-		setImageUri(pickerResult.assets[0].uri);
-		console.log("Image URI:", pickerResult.assets[0].uri); // Log the selected image URI
-	}
-};
-
+		if (!pickerResult.canceled) {
+			setImageUri(pickerResult.assets[0].uri);
+			console.log("Image URI:", pickerResult.assets[0].uri); // Log the selected image URI
+		}
+	};
 
 	// AI response generation functionality
-const generateAiResponse = async () => {
-	try {
-		setAiResponse("Generating AI response...");
+	const generateAiResponse = async () => {
+		try {
+			setAiResponse("Generating AI response...");
 
-		const predefinedInstructions = `
+			const predefinedInstructions = `
             1. Provide a concise and clear response.
             2. Suggestions to improve journal entry.
             3. Positive, encouraging tone.
             4. Focus on mental health advice (no medical advice).
         `;
-		const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
-		const chatSession = model.startChat({ generationConfig, history: [] });
-		const result = await chatSession.sendMessage(combinedPrompt);
+			const combinedPrompt = `${predefinedInstructions}\nUser Input: ${content}`;
+			const chatSession = model.startChat({ generationConfig, history: [] });
+			const result = await chatSession.sendMessage(combinedPrompt);
 
-		const responseText = await result.response.text();
+			const responseText = await result.response.text();
 
-		console.log("AI Response:", responseText); // Log the AI response text
+			console.log("AI Response:", responseText); // Log the AI response text
 
-		setAiResponse(responseText || "AI response is empty.");
-	} catch (error) {
-		console.error("Error generating AI response:", error);
-		Alert.alert("Error", "Unable to generate AI response. Please try again later.");
-		setAiResponse("No AI response yet.");
-	}
-};
-
+			setAiResponse(responseText || "AI response is empty.");
+		} catch (error) {
+			console.error("Error generating AI response:", error);
+			Alert.alert("Error", "Unable to generate AI response. Please try again later.");
+			setAiResponse("No AI response yet.");
+		}
+	};
 
 	const containerStyle = {
 		backgroundColor: "white",
@@ -291,5 +285,6 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 });
+
 
 export default JournalEntryModal;
