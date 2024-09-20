@@ -57,6 +57,14 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		}
 	}, [entry]);
 
+	const resetFields = () => {
+		setTitle("");
+		setContent("");
+		setImageUri(null);
+		setAiResponse("No AI response yet.");
+		setSelectedMoods([]);
+	};
+
 	// Function to save the journal entry
 	const handleSave = async () => {
 		const updatedEntry = {
@@ -65,11 +73,11 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 			content,
 			imageUri,
 			aiResponse,
-			selectedMoods, // No need to map to .id because this already contains mood IDs
+			selectedMoods,
 			dateCreated: new Date().toISOString(),
 		};
 
-		console.log("Updated Entry Object:", updatedEntry); // Log the updated entry
+		console.log("Updated Entry Object:", updatedEntry);
 
 		try {
 			if (entry && entry.id) {
@@ -78,6 +86,8 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 				await createJournalEntry(updatedEntry);
 			}
 			onSave(updatedEntry);
+			resetFields(); // Reset fields after saving
+			onDismiss(); // Close the modal
 		} catch (error) {
 			console.error("Error saving entry:", error);
 		}
@@ -97,9 +107,11 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 						onPress: async () => {
 							try {
 								await deleteJournalEntry(entry.id);
-								onDelete(entry.id); // Call parent to update the state
+								onDelete(entry.id);
+								resetFields(); // Reset fields after deleting
+								onDismiss(); // Close the modal
 							} catch (error) {
-								Alert.alert("Error", "Failed to delete the journal entry");
+								console.error("Error deleting entry:", error);
 							}
 						},
 					},
@@ -123,11 +135,11 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 			quality: 1,
 		});
 
-		console.log("Picker Result:", pickerResult); // Log picker result
+		console.log("Picker Result:", pickerResult);
 
 		if (!pickerResult.canceled) {
 			setImageUri(pickerResult.assets[0].uri);
-			console.log("Image URI:", pickerResult.assets[0].uri); // Log the selected image URI
+			console.log("Image URI:", pickerResult.assets[0].uri);
 		}
 	};
 
@@ -158,6 +170,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		}
 	};
 
+
 	const containerStyle = {
 		backgroundColor: "white",
 		padding: 20,
@@ -183,14 +196,13 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 						<SelectMenu
 							selectedItems={selectedMoods}
 							onSelectedItemsChange={(newMoods) => {
-								console.log("Selected Moods:", newMoods); // Log the selected moods directly
+								console.log("Selected Moods:", newMoods);
 
-								// Store the full mood objects, not just the ids
 								if (newMoods && newMoods.length > 0) {
-									console.log("Valid Selected Moods:", newMoods); // Log full mood objects
-									setSelectedMoods(newMoods); // Store full mood objects
+									console.log("Valid Selected Moods:", newMoods);
+									setSelectedMoods(newMoods);
 								} else {
-									setSelectedMoods([]); // Handle case where no moods are selected
+									setSelectedMoods([]);
 								}
 							}}
 						/>

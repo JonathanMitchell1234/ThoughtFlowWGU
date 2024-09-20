@@ -7,41 +7,14 @@ import SearchBar from "@/components/SearchBar";
 import { Provider } from "react-native-paper";
 import JournalEntryModal from "@/components/JournalEntryModal";
 import StatisticsModal from "@/components/StatisticsModal";
-import { auth } from "@/firebaseConfig"; // Import your Firebase Auth instance
+import { auth } from "@/firebaseConfig";
 import LoginScreen from "@/components/LoginScreen";
-import { getJournalEntries } from "@/journalApi"; // Import your API function
 
-export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, onEntryPress }) {
-	const [journalEntries, setJournalEntries] = useState(initialEntries);
+export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry }) {
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-
-	// Fetch and merge entries when logged in
-	useEffect(() => {
-		if (isLoggedIn) {
-			async function fetchEntries() {
-				try {
-					const entries = await getJournalEntries();
-					// Sort entries by date in descending order
-					const sortedEntries = entries.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-
-					setJournalEntries((prevEntries) => {
-						// Merge fetched entries with existing entries
-						const mergedEntries = [...prevEntries, ...sortedEntries];
-						// Remove duplicates based on entry id
-						const uniqueEntries = mergedEntries.filter((entry, index, self) => index === self.findIndex((e) => e.id === entry.id));
-						// Sort entries by date in descending order
-						return uniqueEntries.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-					});
-				} catch (error) {
-					console.error("Error fetching entries:", error);
-				}
-			}
-			fetchEntries();
-		}
-	}, [isLoggedIn]);
 
 	const handleEntryPress = (entry) => {
 		setSelectedEntry(entry);
@@ -53,32 +26,23 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 		setModalVisible(false);
 	};
 
-	// Modified to display new entry immediately
-	const handleSaveEntry = (updatedEntry) => {
-		console.log("Saving Entry:", updatedEntry);
-		setJournalEntries((prevEntries) => {
-			const existingIndex = prevEntries.findIndex((entry) => entry.id === updatedEntry.id);
-			let updatedEntries;
-			if (existingIndex !== -1) {
-				// Update existing entry
-				updatedEntries = [...prevEntries];
-				updatedEntries[existingIndex] = updatedEntry;
-			} else {
-				// Add new entry to the top of the list
-				updatedEntries = [updatedEntry, ...prevEntries];
+	const handleSaveEntry = async (updatedEntry) => {
+		try {
+			// Update existing entry
+			if (updatedEntry.id) {
+				await updateEntry(updatedEntry);
 			}
-			// Remove duplicates by ID and sort by date
-			const uniqueEntries = updatedEntries.filter((entry, index, self) => index === self.findIndex((e) => e.id === entry.id));
-			return uniqueEntries.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-		});
-		handleModalDismiss();
+			// Removed handleModalDismiss(); since the modal is already closed
+		} catch (error) {
+			console.error("Error saving entry:", error);
+		}
 	};
 
 	const handleSearch = (query) => {
 		setSearchQuery(query);
 	};
 
-	const filteredEntries = journalEntries.filter(
+	const filteredEntries = initialEntries.filter(
 		(entry) =>
 			entry.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -95,9 +59,9 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 					>
 						<ThemedView style={styles.cardContainer}>
 							<SearchBar onChangeText={handleSearch} value={searchQuery} />
-							{filteredEntries.map((entry, index) => (
+							{filteredEntries.map((entry) => (
 								<CardComponent
-									key={index.toString()}
+									key={entry.id} // Use entry.id as key for better performance
 									entry={entry}
 									onPress={() => handleEntryPress(entry)}
 									searchQuery={searchQuery}
@@ -105,16 +69,11 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 							))}
 						</ThemedView>
 					</ParallaxScrollView>
-					<JournalEntryModal
-						visible={modalVisible}
-						onDismiss={handleModalDismiss}
-						onSave={handleSaveEntry}
-						entry={selectedEntry}
-					/>
+					<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
 					<StatisticsModal
 						visible={statisticsModalVisible}
 						onDismiss={() => setStatisticsModalVisible(false)}
-						journalEntries={journalEntries}
+						journalEntries={initialEntries}
 					/>
 				</View>
 			) : (

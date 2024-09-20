@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -7,6 +7,7 @@ import HomeScreen from ".";
 import { Colors } from "@/constants/Colors";
 import SettingsMenu from "@/components/SettingsMenu";
 import StatisticsModal from "@/components/StatisticsModal";
+import { getJournalEntries } from "@/journalApi";
 
 const Tabs = createBottomTabNavigator();
 
@@ -15,7 +16,7 @@ export default function TabLayout() {
 	const [settingsModalVisible, setSettingsModalVisible] = useState(false);
 	const [statsModalVisible, setStatsModalVisible] = useState(false);
 	const [journalEntries, setJournalEntries] = useState([]);
-	const [isLoggedIn, setIsLoggedIn] = useState(false); 
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	const toggleJournalModal = useCallback(() => {
 		setJournalModalVisible((prev) => !prev);
@@ -29,12 +30,35 @@ export default function TabLayout() {
 		setStatsModalVisible((prev) => !prev);
 	}, []);
 
+	const fetchEntries = useCallback(async () => {
+		try {
+			const entries = await getJournalEntries();
+			const sortedEntries = entries.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+			setJournalEntries(sortedEntries);
+		} catch (error) {
+			console.error("Error fetching entries:", error);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (isLoggedIn) {
+			fetchEntries();
+		}
+	}, [isLoggedIn, fetchEntries]);
+
 	const handleSaveEntry = useCallback(
-		(newEntry) => {
-			setJournalEntries((prevEntries) => [newEntry, ...prevEntries]);
-			toggleJournalModal();
+		async (savedEntry) => {
+			await fetchEntries();
+			// Removed toggleJournalModal() to prevent the modal from reopening
 		},
-		[toggleJournalModal]
+		[fetchEntries]
+	);
+
+	const handleUpdateEntry = useCallback(
+		async (updatedEntry) => {
+			await fetchEntries();
+		},
+		[fetchEntries]
 	);
 
 	return (
@@ -66,7 +90,15 @@ export default function TabLayout() {
 						),
 					}}
 				>
-					{(props) => <HomeScreen {...props} journalEntries={journalEntries} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />}
+					{(props) => (
+						<HomeScreen
+							{...props}
+							journalEntries={journalEntries}
+							isLoggedIn={isLoggedIn}
+							setIsLoggedIn={setIsLoggedIn}
+							updateEntry={handleUpdateEntry}
+						/>
+					)}
 				</Tabs.Screen>
 				<Tabs.Screen
 					name="stats"
