@@ -351,14 +351,14 @@ const StatisticsModal = ({ visible, onDismiss, journalEntries }) => {
 		if (visible) {
 			Animated.timing(slideAnim, {
 				toValue: 1,
-				duration: 300,
+				duration: 200,
 				easing: Easing.ease,
 				useNativeDriver: true,
 			}).start();
 		} else {
 			Animated.timing(slideAnim, {
 				toValue: 0,
-				duration: 300,
+				duration: 200,
 				easing: Easing.ease,
 				useNativeDriver: true,
 			}).start();
@@ -387,6 +387,7 @@ const StatisticsModal = ({ visible, onDismiss, journalEntries }) => {
 			<Animated.View style={containerStyle}>
 				<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
 					<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+						<IconButton icon="arrow-left" size={30} onPress={onDismiss} style={{ paddingRight: 20 }} />
 						<Text style={styles.modalTitle}>Statistics</Text>
 						<View style={styles.statSection}>
 							<Text style={styles.sectionTitle}>Top 5 Moods</Text>

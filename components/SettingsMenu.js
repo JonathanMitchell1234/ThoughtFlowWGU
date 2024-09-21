@@ -6,6 +6,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
+import { IconButton } from "react-native-paper";
 
 const SettingsMenu = ({ visible, onDismiss, setIsLoggedIn }) => {
 	const navigation = useNavigation();
@@ -16,14 +17,14 @@ const SettingsMenu = ({ visible, onDismiss, setIsLoggedIn }) => {
 		if (visible) {
 			Animated.timing(slideAnim, {
 				toValue: 1,
-				duration: 300,
+				duration: 200,
 				easing: Easing.ease,
 				useNativeDriver: true,
 			}).start();
 		} else {
 			Animated.timing(slideAnim, {
 				toValue: 0,
-				duration: 300,
+				duration: 200,
 				easing: Easing.ease,
 				useNativeDriver: true,
 			}).start();
@@ -88,6 +89,7 @@ const SettingsMenu = ({ visible, onDismiss, setIsLoggedIn }) => {
 				<Animated.View style={containerStyle}>
 					<KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
 						<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+							<IconButton icon="arrow-left" size={30} onPress={onDismiss} style={{ paddingRight: 20 }}/>
 							<View style={styles.avatarContainer}>
 								<Avatar.Image size={80} source={{ uri: profileImage }} />
 							</View>
