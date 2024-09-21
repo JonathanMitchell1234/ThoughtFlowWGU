@@ -68,7 +68,7 @@ export default function SelectMenu({ selectedItems, onSelectedItemsChange }) {
       <SectionedMultiSelect
         items={items}
         IconRenderer={Icon}
-        uniqueKey="id"
+        uniqueKey="name"
         onSelectedItemsChange={onSelectedItemsChange}
         selectedItems={selectedItems}
         selectText="Mood"

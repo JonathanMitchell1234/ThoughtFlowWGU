@@ -21,6 +21,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	const model = genAI.getGenerativeModel({
 		model: "gemini-1.0-pro",
 	});
+	
 
 	const generationConfig = {
 		temperature: 0.9,
@@ -47,15 +48,31 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		}
 	}, [visible, slideAnim]);
 
+	// useEffect(() => {
+	// 	if (entry) {
+	// 		setTitle(entry.title);
+	// 		setContent(entry.content);
+	// 		setImageUri(entry.imageUri);
+	// 		setAiResponse(entry.aiResponse || "No AI response yet.");
+	// 		setSelectedMoods(entry.selectedMoods || []);
+	// 	}
+	// }, [entry]);
+
 	useEffect(() => {
 		if (entry) {
 			setTitle(entry.title);
 			setContent(entry.content);
 			setImageUri(entry.imageUri);
 			setAiResponse(entry.aiResponse || "No AI response yet.");
-			setSelectedMoods(entry.selectedMoods || []);
+			// Map selectedMoods to an array of mood names
+			        const moodNames = entry.selectedMoods ? [...entry.selectedMoods] : [];
+					setSelectedMoods(moodNames);
+				setSelectedMoods(moodNames);
+		} else {
+			resetFields();
 		}
 	}, [entry]);
+
 
 	const resetFields = () => {
 		setTitle("");
@@ -64,16 +81,20 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		setAiResponse("No AI response yet.");
 		setSelectedMoods([]);
 	};
+	
 
 	// Function to save the journal entry
 	const handleSave = async () => {
+
+		console.log("Updated Entry Object:", JSON.stringify(updatedEntry));
+
 		const updatedEntry = {
 			id: entry ? entry.id : null,
 			title,
 			content,
 			imageUri,
 			aiResponse,
-			selectedMoods,
+			mood: selectedMoods,
 			dateCreated: new Date().toISOString(),
 		};
 
