@@ -84,7 +84,13 @@ const LoginScreen = ({ onLogin }) => {
 							style={styles.input}
 						/>
 
-						<Button mode="contained" onPress={handleLogin} style={styles.button}>
+						<Button
+							mode="contained"
+							onPress={handleLogin}
+							contentStyle={styles.buttonContent}
+							labelStyle={styles.buttonLabel}
+							style={styles.button}
+						>
 							{isRegistering ? "Register" : "Login"}
 						</Button>
 
@@ -154,6 +160,13 @@ const styles = StyleSheet.create({
 		color: "red",
 		marginBottom: 12,
 		textAlign: "center",
+	},
+	buttonContent: {
+		paddingHorizontal: 16, 
+		paddingVertical: 3, 
+	},
+	buttonLabel: {
+		fontSize: 16, 
 	},
 });
 

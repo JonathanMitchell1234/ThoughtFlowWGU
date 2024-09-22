@@ -296,7 +296,7 @@ const moodItems = [
 
 // Create a lookup object for mood names
 const moodLookup = moodItems.reduce((acc, mood) => {
-	acc[mood.id] = mood.name;
+	acc[mood.name] = mood.name;
 	return acc;
 }, {});
 

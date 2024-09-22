@@ -26,7 +26,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	const generationConfig = {
 		temperature: 0.9,
 		topP: 1,
-		maxOutputTokens: 2048,
+		maxOutputTokens: 8048,
 		responseMimeType: "text/plain",
 	};
 
@@ -57,7 +57,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 			// Map selectedMoods to an array of mood names
 			const moodNames = entry.selectedMoods ? [...entry.selectedMoods] : [];
 			setSelectedMoods(moodNames);
-			setSelectedMoods(moodNames);
+			// setSelectedMoods(moodNames);
 		} else {
 			resetFields();
 		}
@@ -168,7 +168,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 
 			const responseText = await result.response.text();
 
-			console.log("AI Response:", responseText); // Log the AI response text
+			// console.log("AI Response:", responseText); // Log the AI response text
 
 			setAiResponse(responseText || "AI response is empty.");
 		} catch (error) {
@@ -207,7 +207,7 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 								console.log("Selected Moods:", newMoods);
 
 								if (newMoods && newMoods.length > 0) {
-									console.log("Valid Selected Moods:", newMoods);
+									// console.log("Valid Selected Moods:", newMoods);
 									setSelectedMoods(newMoods);
 								} else {
 									setSelectedMoods([]);

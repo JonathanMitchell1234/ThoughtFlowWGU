@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const createJournalEntry = async (entry) => {
 	try {
-		console.log("Sending Entry to API (Create):", entry); // Log the entry object before sending
+		// console.log("Sending Entry to API (Create):", entry); // Log the entry object before sending
 		const response = await axiosInstance.post("journal-entries", entry);
 		return response.data;
 	} catch (error) {
@@ -24,7 +24,7 @@ export const getJournalEntries = async () => {
 
 export const updateJournalEntry = async (id, updatedEntry) => {
 	try {
-		console.log("Sending Updated Entry to API (Update):", updatedEntry); // Log the updated entry object before sending
+		// console.log("Sending Updated Entry to API (Update):", updatedEntry); // Log the updated entry object before sending
 		const response = await axiosInstance.put(`journal-entries/${id}`, updatedEntry);
 		return response.data;
 	} catch (error) {

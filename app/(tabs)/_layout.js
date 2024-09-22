@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import JournalEntryModal from "@/components/JournalEntryModal";
@@ -8,6 +8,7 @@ import { Colors } from "@/constants/Colors";
 import SettingsMenu from "@/components/SettingsMenu";
 import StatisticsModal from "@/components/StatisticsModal";
 import { getJournalEntries } from "@/journalApi";
+import LoginScreen from "@/components/LoginScreen";
 
 const Tabs = createBottomTabNavigator();
 
@@ -40,6 +41,17 @@ export default function TabLayout() {
 		}
 	}, []);
 
+	const handleDeleteEntry = useCallback(
+		async (deletedEntryId) => {
+			try {
+				await fetchEntries();
+			} catch (error) {
+				console.error("Error handling delete entry:", error);
+			}
+		},
+		[fetchEntries]
+	);
+
 	useEffect(() => {
 		if (isLoggedIn) {
 			fetchEntries();
@@ -49,7 +61,6 @@ export default function TabLayout() {
 	const handleSaveEntry = useCallback(
 		async (savedEntry) => {
 			await fetchEntries();
-			// Removed toggleJournalModal() to prevent the modal from reopening
 		},
 		[fetchEntries]
 	);
@@ -60,6 +71,10 @@ export default function TabLayout() {
 		},
 		[fetchEntries]
 	);
+
+	if (!isLoggedIn) {
+		return <LoginScreen onLogin={() => setIsLoggedIn(true)} />;
+	}
 
 	return (
 		<>
@@ -97,6 +112,7 @@ export default function TabLayout() {
 							isLoggedIn={isLoggedIn}
 							setIsLoggedIn={setIsLoggedIn}
 							updateEntry={handleUpdateEntry}
+							deleteEntry={handleDeleteEntry}
 						/>
 					)}
 				</Tabs.Screen>

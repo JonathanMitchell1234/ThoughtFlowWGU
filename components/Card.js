@@ -5,12 +5,12 @@ import { StyleSheet, Image, TouchableOpacity } from "react-native";
 const LeftContent = (props) => <Avatar.Icon {...props} icon="brain" />;
 
 const CardComponent = ({ entry, onPress, searchQuery }) => {
-	console.log("Rendering Card Component for Entry:", entry);
-	console.log("Entry Title:", entry.title);
-	console.log("Entry Content:", entry.content);
-	console.log("Image URI:", entry.imageUri); // Log image URI
-	console.log("AI Response:", entry.aiResponse); // Log AI response
-	console.log("Selected Moods:", entry.selectedMoods); // Log selected moods
+	// console.log("Rendering Card Component for Entry:", entry);
+	// console.log("Entry Title:", entry.title);
+	// console.log("Entry Content:", entry.content);
+	// console.log("Image URI:", entry.imageUri); // Log image URI
+	// console.log("AI Response:", entry.aiResponse); // Log AI response
+	// console.log("Selected Moods:", entry.selectedMoods); // Log selected moods
 
 	const date = new Date(entry.dateCreated);
 	const formattedDate = date.toLocaleDateString();

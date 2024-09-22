@@ -10,7 +10,7 @@ import StatisticsModal from "@/components/StatisticsModal";
 import { auth } from "@/firebaseConfig";
 import LoginScreen from "@/components/LoginScreen";
 
-export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry }) {
+export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry, deleteEntry }) {
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false);
@@ -24,6 +24,15 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 	const handleModalDismiss = () => {
 		setSelectedEntry(null);
 		setModalVisible(false);
+	};
+
+	const handleDeleteEntry = async (deletedEntryId) => {
+		try {
+			await deleteEntry(deletedEntryId);
+			// Optionally, you can update local state here if needed
+		} catch (error) {
+			console.error("Error deleting entry:", error);
+		}
 	};
 
 	const handleSaveEntry = async (updatedEntry) => {
@@ -69,7 +78,13 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 							))}
 						</ThemedView>
 					</ParallaxScrollView>
-					<JournalEntryModal visible={modalVisible} onDismiss={handleModalDismiss} onSave={handleSaveEntry} entry={selectedEntry} />
+					<JournalEntryModal
+						visible={modalVisible}
+						onDismiss={handleModalDismiss}
+						onSave={handleSaveEntry}
+						entry={selectedEntry}
+						onDelete={handleDeleteEntry}
+					/>
 					<StatisticsModal
 						visible={statisticsModalVisible}
 						onDismiss={() => setStatisticsModalVisible(false)}
