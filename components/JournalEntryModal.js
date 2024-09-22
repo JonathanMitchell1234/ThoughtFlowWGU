@@ -2,9 +2,10 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Alert, Animated, Easing, Image, Button, Platform } from "react-native";
 import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import SelectMenu from "@/components/SelectMenu"; 
-import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi"; 
+import SelectMenu from "@/components/SelectMenu";
+import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Markdown from "react-native-markdown-display";
 
 const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	const [title, setTitle] = useState(entry?.title || "");
@@ -21,7 +22,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 	const model = genAI.getGenerativeModel({
 		model: "gemini-1.0-pro",
 	});
-	
 
 	const generationConfig = {
 		temperature: 0.9,
@@ -48,16 +48,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		}
 	}, [visible, slideAnim]);
 
-	// useEffect(() => {
-	// 	if (entry) {
-	// 		setTitle(entry.title);
-	// 		setContent(entry.content);
-	// 		setImageUri(entry.imageUri);
-	// 		setAiResponse(entry.aiResponse || "No AI response yet.");
-	// 		setSelectedMoods(entry.selectedMoods || []);
-	// 	}
-	// }, [entry]);
-
 	useEffect(() => {
 		if (entry) {
 			setTitle(entry.title);
@@ -65,14 +55,13 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 			setImageUri(entry.imageUri);
 			setAiResponse(entry.aiResponse || "No AI response yet.");
 			// Map selectedMoods to an array of mood names
-			        const moodNames = entry.selectedMoods ? [...entry.selectedMoods] : [];
-					setSelectedMoods(moodNames);
-				setSelectedMoods(moodNames);
+			const moodNames = entry.selectedMoods ? [...entry.selectedMoods] : [];
+			setSelectedMoods(moodNames);
+			setSelectedMoods(moodNames);
 		} else {
 			resetFields();
 		}
 	}, [entry]);
-
 
 	const resetFields = () => {
 		setTitle("");
@@ -81,11 +70,9 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		setAiResponse("No AI response yet.");
 		setSelectedMoods([]);
 	};
-	
 
 	// Function to save the journal entry
 	const handleSave = async () => {
-
 		console.log("Updated Entry Object:", JSON.stringify(updatedEntry));
 
 		const updatedEntry = {
@@ -191,7 +178,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		}
 	};
 
-
 	const containerStyle = {
 		backgroundColor: "white",
 		padding: 20,
@@ -243,9 +229,10 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 								<Text style={styles.aiResponseLabel}>AI Suggestions/Responses</Text>
 								<IconButton icon="robot" size={30} color="#6200ee" onPress={generateAiResponse} style={styles.generateIcon} />
 							</View>
-							<Text style={styles.aiResponseText}>{aiResponse}</Text>
+							<Markdown>{aiResponse}</Markdown>
 							<Button title="Generate" onPress={generateAiResponse} color="#6200ee" />
 						</View>
+
 						<View style={styles.iconRow}>
 							<IconButton icon="image" size={30} color="#6200ee" onPress={openImagePicker} />
 							<IconButton icon="content-save" size={30} color="#6200ee" onPress={handleSave} />
@@ -319,6 +306,5 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 	},
 });
-
 
 export default JournalEntryModal;
