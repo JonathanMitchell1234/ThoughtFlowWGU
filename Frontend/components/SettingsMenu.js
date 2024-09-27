@@ -5,7 +5,7 @@ import { AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
+import  { auth }  from "../firebaseConfig"
 import { IconButton } from "react-native-paper";
 
 const SettingsMenu = ({ visible, onDismiss, setIsLoggedIn }) => {

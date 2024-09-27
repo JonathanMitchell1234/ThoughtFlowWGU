@@ -34,6 +34,9 @@ export default function TabLayout() {
 	const fetchEntries = useCallback(async () => {
 		try {
 			const entries = await getJournalEntries();
+			if (!entries || !Array.isArray(entries)) {
+				throw new Error("Invalid response from getJournalEntries");
+			}
 			const sortedEntries = entries.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
 			setJournalEntries(sortedEntries);
 		} catch (error) {

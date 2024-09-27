@@ -8,12 +8,18 @@ import { Provider } from "react-native-paper";
 import JournalEntryModal from "@/components/JournalEntryModal";
 import StatisticsModal from "@/components/StatisticsModal";
 import LoginScreen from "@/components/LoginScreen";
+import { deleteJournalEntry } from "@/journalApi"; // Import deleteJournalEntry here
 
-export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry, deleteEntry }) {
+export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry }) {
+	const [journalEntries, setJournalEntries] = useState(initialEntries || []);
 	const [selectedEntry, setSelectedEntry] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [statisticsModalVisible, setStatisticsModalVisible] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+
+	useEffect(() => {
+		setJournalEntries(initialEntries);
+	}, [initialEntries]);
 
 	const handleEntryPress = (entry) => {
 		setSelectedEntry(entry);
@@ -26,21 +32,30 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 	};
 
 	const handleDeleteEntry = async (deletedEntryId) => {
+		console.log("Attempting to delete entry with ID:", deletedEntryId);
 		try {
-			await deleteEntry(deletedEntryId);
-			// Optionally, you can update local state here if needed
+			if (!deletedEntryId) {
+				console.error("Invalid entry ID for deletion");
+				return;
+			}
+			const result = await deleteJournalEntry(deletedEntryId);
+			console.log("Delete entry result:", result);
+			// Update local state to remove the deleted entry
+			setJournalEntries((prevEntries) => prevEntries.filter((entry) => entry.id !== deletedEntryId));
 		} catch (error) {
 			console.error("Error deleting entry:", error);
 		}
 	};
 
-	const handleSaveEntry = async (updatedEntry) => {
+	const handleSaveEntry = async (savedEntry) => {
 		try {
-			// Update existing entry
-			if (updatedEntry.id) {
-				await updateEntry(updatedEntry);
+			if (savedEntry.id) {
+				// Entry was updated, replace it in the state
+				setJournalEntries((prevEntries) => prevEntries.map((entry) => (entry.id === savedEntry.id ? savedEntry : entry)));
+			} else {
+				// New entry was created, add it to the state
+				setJournalEntries((prevEntries) => [savedEntry, ...prevEntries]);
 			}
-			// Removed handleModalDismiss(); since the modal is already closed
 		} catch (error) {
 			console.error("Error saving entry:", error);
 		}
@@ -50,7 +65,7 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 		setSearchQuery(query);
 	};
 
-	const filteredEntries = initialEntries.filter(
+	const filteredEntries = journalEntries.filter(
 		(entry) =>
 			entry.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			entry.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -69,7 +84,7 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 							<SearchBar onChangeText={handleSearch} value={searchQuery} />
 							{filteredEntries.map((entry, index) => (
 								<CardComponent
-									key={entry.id || index} // Use entry.id if available, otherwise fallback to index
+									key={entry.id || index}
 									entry={entry}
 									onPress={() => handleEntryPress(entry)}
 									searchQuery={searchQuery}
@@ -82,12 +97,12 @@ export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn,
 						onDismiss={handleModalDismiss}
 						onSave={handleSaveEntry}
 						entry={selectedEntry}
-						onDelete={handleDeleteEntry}
+						onDelete={handleDeleteEntry} // Pass the handleDeleteEntry function
 					/>
 					<StatisticsModal
 						visible={statisticsModalVisible}
 						onDismiss={() => setStatisticsModalVisible(false)}
-						journalEntries={initialEntries}
+						journalEntries={journalEntries}
 					/>
 				</View>
 			) : (

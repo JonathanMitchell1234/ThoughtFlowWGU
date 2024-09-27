@@ -17,7 +17,7 @@ const LoginScreen = ({ onLogin }) => {
 
 	const sendTokenToBackend = async (idToken) => {
 		try {
-			const response = await axios.post("http://18.216.214.123:8080/api/auth/login", {
+			const response = await axios.post("https://thoughtflow.online/api/auth/login", {
 				token: idToken,
 			});
 			console.log("Backend response:", response.data);
@@ -51,7 +51,7 @@ const LoginScreen = ({ onLogin }) => {
 	return (
 		<View style={styles.container}>
 			<Video
-				source={Platform.OS === "ios" ? require("../assets/images/journal.mov") : require("../assets/images/journal.mov")}
+				source={Platform.OS === "ios" ? require("../assets/images/journal.mov") : require("../assets/images/journal2.mp4")}
 				style={styles.backgroundVideo}
 				resizeMode="cover"
 				shouldPlay

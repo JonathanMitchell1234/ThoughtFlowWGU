@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "version": ">= 12.5.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_GOOGLE_API_KEY": "AIzaSyAfc1XrW9e-AUsnsiiQWRnotQ4X96js45o",
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyCT1LCcHvYDsgtyHkg4S-YMRI-OoDANjco"
+      },
+      "autoIncrement": true
+      
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

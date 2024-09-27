@@ -3,7 +3,7 @@ import { StyleSheet, KeyboardAvoidingView, ScrollView, TextInput, Text, View, Al
 import { Modal, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import SelectMenu from "@/components/SelectMenu";
-import { createJournalEntry, updateJournalEntry, deleteJournalEntry } from "../journalApi";
+import { createJournalEntry, updateJournalEntry } from "../journalApi";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Markdown from "react-native-markdown-display";
 
@@ -57,7 +57,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 			// Map selectedMoods to an array of mood names
 			const moodNames = entry.selectedMoods ? [...entry.selectedMoods] : [];
 			setSelectedMoods(moodNames);
-			// setSelectedMoods(moodNames);
 		} else {
 			resetFields();
 		}
@@ -73,8 +72,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 
 	// Function to save the journal entry
 	const handleSave = async () => {
-		console.log("Updated Entry Object:", JSON.stringify(updatedEntry));
-
 		const updatedEntry = {
 			id: entry ? entry.id : null,
 			title,
@@ -88,22 +85,24 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 		console.log("Updated Entry Object:", updatedEntry);
 
 		try {
+			let savedEntry;
 			if (entry && entry.id) {
-				await updateJournalEntry(entry.id, updatedEntry);
+				savedEntry = await updateJournalEntry(entry.id, updatedEntry);
 			} else {
-				await createJournalEntry(updatedEntry);
+				savedEntry = await createJournalEntry(updatedEntry);
 			}
-			onSave(updatedEntry);
-			resetFields(); // Reset fields after saving
-			onDismiss(); // Close the modal
+			onSave(savedEntry); // Use the saved entry from the backend
+			resetFields();
+			onDismiss();
 		} catch (error) {
 			console.error("Error saving entry:", error);
 		}
 	};
 
-	// Function to delete the journal entry
-	const handleDelete = useCallback(async () => {
+	const handleDelete = () => {
 		if (entry && typeof onDelete === "function") {
+			console.log("Entry in handleDelete:", entry);
+			console.log("Entry ID in handleDelete:", entry?.id);
 			Alert.alert(
 				"Delete Entry",
 				"Are you sure you want to delete this entry?",
@@ -112,22 +111,18 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 					{
 						text: "Delete",
 						style: "destructive",
-						onPress: async () => {
-							try {
-								await deleteJournalEntry(entry.id);
-								onDelete(entry.id);
-								resetFields(); // Reset fields after deleting
-								onDismiss(); // Close the modal
-							} catch (error) {
-								console.error("Error deleting entry:", error);
-							}
+						onPress: () => {
+							console.log("Deleting entry with ID:", entry.id);
+							onDelete(entry.id);
+							resetFields(); // Reset fields after deleting
+							onDismiss(); // Close the modal
 						},
 					},
 				],
 				{ cancelable: true }
 			);
 		}
-	}, [entry, onDelete]);
+	};
 
 	// Image picker functionality
 	const openImagePicker = async () => {
@@ -207,7 +202,6 @@ const JournalEntryModal = ({ visible, onDismiss, onSave, onDelete, entry }) => {
 								console.log("Selected Moods:", newMoods);
 
 								if (newMoods && newMoods.length > 0) {
-									// console.log("Valid Selected Moods:", newMoods);
 									setSelectedMoods(newMoods);
 								} else {
 									setSelectedMoods([]);

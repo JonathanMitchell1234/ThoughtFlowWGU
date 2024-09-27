@@ -1,0 +1,13 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+*.js text
+*.json text
+*.md text
+*.html text
+*.css text
+
+
+*.png binary
+*.jpg binary
+*.gif binary

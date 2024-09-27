@@ -24,7 +24,6 @@ export const getJournalEntries = async () => {
 
 export const updateJournalEntry = async (id, updatedEntry) => {
 	try {
-		// console.log("Sending Updated Entry to API (Update):", updatedEntry); // Log the updated entry object before sending
 		const response = await axiosInstance.put(`journal-entries/${id}`, updatedEntry);
 		return response.data;
 	} catch (error) {
@@ -34,15 +33,28 @@ export const updateJournalEntry = async (id, updatedEntry) => {
 };
 
 
+
 export const deleteJournalEntry = async (id) => {
-    try {
-        const response = await axiosInstance.delete(`journal-entries/${id}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error deleting journal entry:", error);
-        throw error;
-    }
+	console.log("deleteJournalEntry called with ID:", id);
+	try {
+		if (!id) {
+			throw new Error("Invalid ID for deletion");
+		}
+		const response = await axiosInstance.delete(`journal-entries/${id}`);
+		console.log("Delete API response:", response);
+		return response.data;
+	} catch (error) {
+		console.error("Error in deleteJournalEntry:", error);
+		if (error.response) {
+			console.error("Response data:", error.response.data);
+			console.error("Response status:", error.response.status);
+		}
+		throw error;
+	}
 };
+
+
+
 
 
 

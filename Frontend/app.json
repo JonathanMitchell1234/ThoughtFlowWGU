@@ -1,11 +1,18 @@
 {
   "expo": {
-        "extra": {
-       "googleClientId": "390648558615-tjeo8e1om30u86ducfk424gieiphtepe.apps.googleusercontent.com",
+        "assetBundlePatterns": [
+      "assets/images/*"
+
+        ],
+    "extra": {
+      "googleClientId": "390648558615-tjeo8e1om30u86ducfk424gieiphtepe.apps.googleusercontent.com",
       "androidClientId": "390648558615-pb2vq1vh65ls57f5jlutlj2sjnducdfj.apps.googleusercontent.com",
-      "webClientId": "390648558615-79g68n4nhlfu8ffopnsnejiea7ba8un6.apps.googleusercontent.com"
+      "webClientId": "390648558615-79g68n4nhlfu8ffopnsnejiea7ba8un6.apps.googleusercontent.com",
+      "eas": {
+        "projectId": "782cf202-75ae-4b05-be00-cb033e3784d6"
+      }
     },
-    "name": "test",
+    "name": "ThoughtFlow.AI",
     "owner": "dreadcatcleo",
     "slug": "test",
     "version": "1.0.0",
@@ -14,8 +21,8 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/images/splash3.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -23,9 +30,13 @@
     },
     "android": {
       "package": "com.mentalhealthjournal.test",
-      "permissions": ["READ_EXTERNAL_STORAGE"],
-        "softwareKeyboardLayoutMode": "pan",
-      "hardwareAcceleration": false,
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
+      ],
+      "usesCleartextTraffic": true,
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
