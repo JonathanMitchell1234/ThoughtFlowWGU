@@ -1,50 +1,52 @@
-# Welcome to your Expo app 👋
+# ThoughtFlow
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+  
+ThoughtFlow is a journaling application that allows users to log their thoughts and emotions and view statistics based on those entries. The application is built using React Native, integrates with Firebase for authentication, Java/Spring Boot for a backend, and MySQL as the database.
 
-## Get started
+## Features
 
-1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+-  **User Authentication**: Users can register and log in using their email and password.
 
-2. Start the app
+  
 
-   ```bash
-    npx expo start
-   ```
+-  **Journal Entries**: Users can create, update, and delete journal entries. Each entry can include a title, content, image, and selected moods.
 
-In the output, you'll find options to open the app in a
+  
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+-  **AI Integration**: The application uses Google's Gemini Generative AI to provide responses based on the journal entry content.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+  
 
-## Get a fresh project
+-  **Statistics**: Users can view statistics based on their journal entries.
 
-When you're ready, run:
+  
 
-```bash
-npm run reset-project
-```
+-  **Settings**: Users can log out and manage other settings.
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Maintenance
 
-## Learn more
+ Clone the repository:
+ 
 
-To learn more about developing your project with Expo, look at the following resources:
+     git clone https://gitlab.com/wgu-gitlab-environment/student-repos/JonathanMitchell1234/d424-software-engineering-capstone/-/tree/working-branch/Frontend
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+ Install the dependencies:
 
-## Join the community
+     npm install
+Create a .env file with your own API keys:
 
-Join our community of developers creating universal apps.
+    EXPO_PUBLIC_GOOGLE_API_KEY=YOURKEY
+    EXPO_PUBLIC_FIREBASE_API_KEY=YOURKEY
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Run the Docker image containing the Java/Spring Boot backend on port 8080:
+
+    sudo docker run --platform linux/amd64 -d -p 8080:8080 jonmitchell1234/journalbackend:test2
+
+Start the Expo server:
+
+    NPX expo start
+
+
+
+
