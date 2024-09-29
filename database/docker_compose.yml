@@ -5,8 +5,8 @@ services:
     build: .
     container_name: thoughtflow_journal_db
     environment:
-      MYSQL_ROOT_PASSWORD: Camelwides9864!
-      MYSQL_DATABASE: journal_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3307:3306"
     volumes:
