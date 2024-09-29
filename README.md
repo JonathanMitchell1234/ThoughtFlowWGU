@@ -27,12 +27,33 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
 
     git checkout docker-deploy
 
-**Fill in the Environmental Variables in database Directory**
+**Fill in the Environmental Variables in the Front End Directory**
+
+    EXPO_PUBLIC_GOOGLE_API_KEY=YOURGOOGLEGEMINIAPIKEY
+
+    EXPO_PUBLIC_FIREBASE_API_KEY=YOUREXPOPUBLICFIREBASEAPIKEY
+
+    REACT_APP_FIREBASE_API_KEY=YOURFIREBASEAPIKEY
+    
+    REACT_APP_FIREBASE_AUTH_DOMAIN=YOURFIREBASEAUTHDOMAIN
+    
+    REACT_APP_FIREBASE_PROJECT_ID=YOURFIREBASEPROJECTID
+    
+    REACT_APP_FIREBASE_STORAGE_BUCKET=YOURFIREBASESTORAGEBUCKET
+    
+    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=YOURSENDERID
+    
+    REACT_APP_FIREBASE_APP_ID=YOURAPPID
+    
+    REACT_APP_FIREBASE_MEASUREMENT_ID=YOURMEASUREMENTID
+
+
+**Create a.env file in the database Directory and fill it in**
 
     MYSQL_ROOT_PASSWORD=YOURROOTPASSWORD
     MYSQL_DATABASE=YOURDBNAME
 
-**Fill in the Environmental Variables in Root Directory**
+**Create a .env file Root Directory and fill it in**
 
     REACT_APP_BACKEND_URL=exp://YOUREXPOBACKENDURL
     
@@ -41,6 +62,12 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
     MYSQL_ROOT_PASSWORD=YOURMYSQLROOTPASSWORD
     
     MYSQL_DATABASE=YOURDBNAME
+
+**Fill in the Backend Data Source in application.properties**
+
+    spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+    spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 **Run the Docker Compose File**
 
