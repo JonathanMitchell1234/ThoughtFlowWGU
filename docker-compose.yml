@@ -10,7 +10,7 @@ services:
     depends_on:
       - backend
     environment:
-      - REACT_APP_BACKEND_URL=exp://192.168.1.161:8081
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
   backend:
     build:
@@ -21,15 +21,15 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://root:Camelwides9864!@db:3306/thoughtflow_journal_db
+      - DATABASE_URL=${DATABASE_URL}
 
   db:
     build:
       context: ./database
     container_name: thoughtflow_journal_db
     environment:
-      MYSQL_ROOT_PASSWORD: Camelwides9864!
-      MYSQL_DATABASE: thoughtflow_journal_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     volumes:
