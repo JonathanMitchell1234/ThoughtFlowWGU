@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 
 // Create Axios instance
 const axiosInstance = axios.create({
-	baseURL: "http://localhost:8080/api/", // Replace with your backend's IP or domain
+	baseURL: "https://thoughtflow.online/api/", // Replace with your backend's IP or domain
 	headers: {
 		"Content-Type": "application/json",
 	},
