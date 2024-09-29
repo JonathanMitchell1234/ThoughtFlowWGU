@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: thoughtflow_frontend
+    ports:
+      - "8081:8081"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_BACKEND_URL=exp://192.168.1.161:8081
+
+  backend:
+    build:
+      context: ./backend
+    container_name: thoughtflow_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=mysql://root:Camelwides9864!@db:3306/thoughtflow_journal_db
+
+  db:
+    build:
+      context: ./database
+    container_name: thoughtflow_journal_db
+    environment:
+      MYSQL_ROOT_PASSWORD: Camelwides9864!
+      MYSQL_DATABASE: thoughtflow_journal_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

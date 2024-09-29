@@ -10,7 +10,6 @@ npm-debug.*
 *.orig.*
 web-build/
 .env
-firebaseConfig.js
 eas.json
 
 # macOS

@@ -27,7 +27,7 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
 
      git clone https://gitlab.com/wgu-gitlab-environment/student-repos/JonathanMitchell1234/d424-software-engineering-capstone/-/tree/working-branch/
 
- **Install the dependencies:**
+ **Install the Frontend dependencies:**
 
      npm install
 **Create a .env file with your own API keys:**
@@ -37,7 +37,7 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
 
 **Run the Docker image containing the Java/Spring Boot backend on port 8080:**
 
-    sudo docker run --platform linux/amd64 -d -p 8080:8080 jonmitchell1234/journalbackend:test2
+    sudo docker run -d -p 8080:8080 jonmitchell1234/journalbackend:test2
 
 **Start the Expo server:**
 

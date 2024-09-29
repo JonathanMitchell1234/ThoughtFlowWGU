@@ -8,7 +8,7 @@ import { Provider } from "react-native-paper";
 import JournalEntryModal from "@/components/JournalEntryModal";
 import StatisticsModal from "@/components/StatisticsModal";
 import LoginScreen from "@/components/LoginScreen";
-import { deleteJournalEntry } from "@/journalApi"; // Import deleteJournalEntry here
+import { deleteJournalEntry } from "@/journalApi"; 
 
 export default function HomeScreen({ journalEntries: initialEntries, isLoggedIn, setIsLoggedIn, updateEntry }) {
 	const [journalEntries, setJournalEntries] = useState(initialEntries || []);
