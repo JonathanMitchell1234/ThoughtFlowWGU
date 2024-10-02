@@ -5,6 +5,6 @@
 expo-env.d.ts
 # @end expo-cli
 echo "node_modules/" >> .gitignore
-.eas
+eas.json
 .env
 
