@@ -21,7 +21,8 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
 
 ## [](#maintenance)Maintenance
 
-![Class Diagram](https://github.com/user-attachments/assets/0a6491a4-af04-45cf-8129-2bc22448cfd0)
+![Class Diagram](https://github.com/user-attachments/assets/0a6491a4-af04-45cf-8129-2bc22448cfd0)  ![App design diagram](https://github.com/user-attachments/assets/33ca8865-593c-4f55-94a5-b7e7e04d3d45)
+
 
 
 **Clone the repository:**
