@@ -2,7 +2,9 @@
 
 ThoughtFlow is a journaling application that allows users to log their thoughts and emotions and view statistics based on those entries. The application is built using React Native with JavaScript/TypeScript, integrates with Firebase for authentication, Java/Spring Boot for a backend, and MySQL as the database. The application's backend is hosted on an AWS EC2 instance which connects to an AWS RDS instance. Additionally, this repository contains the the files for a NextJS website which is hosted at [thoughtflowjournal.vercel.app](/wgu-gitlab-environment/student-repos/JonathanMitchell1234/d424-software-engineering-capstone/-/blob/working-branch/thoughtflowjournal.vercel.app) and which hosts the APK for sideloading the application on Android.
 
-<img width="334" alt="Screenshot 2024-10-08 at 3 54 56 PM" src="https://github.com/user-attachments/assets/68432535-b3e7-4839-8a83-fe6eb7e37f9b"> <img width="334" alt="Screenshot 2024-10-08 at 4 11 00 PM" src="https://github.com/user-attachments/assets/53aca973-4a65-4479-a9ac-9378d757c34b">
+<img width="334" alt="Screenshot 2024-10-08 at 4 11 00 PM 2" src="https://github.com/user-attachments/assets/95bb8749-53f3-4f99-881e-d1853a7f8878">![App Main Screen](https://github.com/user-attachments/assets/4d1d70b7-1f44-49f7-9c97-7df56f0cf7c2)
+
+
 
 
 ## [](#features)Features
