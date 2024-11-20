@@ -85,7 +85,7 @@ ThoughtFlow is a journaling application that allows users to log their thoughts 
 
 ## [](#installing-the-apk-as-an-end-user)Installing the APK as an End User
 
-1.  Navigate to [thoughtflowjournal.vercel.app](/wgu-gitlab-environment/student-repos/JonathanMitchell1234/d424-software-engineering-capstone/-/blob/working-branch/thoughtflowjournal.vercel.app) in your browser.
+1.  Navigate to [thoughtflowjournal.vercel.app](thoughtflowjournal.vercel.app) in your browser.
     
 2.  Click the download APK button on the landing page.
     
